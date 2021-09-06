@@ -1,4 +1,5 @@
 ﻿using System;
+using Isu.Tools;
 
 namespace Isu.Entities
 {
@@ -6,9 +7,9 @@ namespace Isu.Entities
     {
         public Student(Group studentGroup, string name)
         {
+            StudentGroup = studentGroup ?? throw new IsuException("Group is null");
             Name = name;
             Uuid = Guid.NewGuid();
-            StudentGroup = studentGroup;
             studentGroup.AddStudent(this);
         }
 

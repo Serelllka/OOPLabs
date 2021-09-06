@@ -23,7 +23,7 @@ namespace Isu.Tests
             Student student = _isuService.AddStudent(group, "F*ckingSlave");
             
             Assert.AreEqual(student.StudentGroup, group);
-            Assert.IsTrue(group.ListOfStudents.Contains(student));
+            Assert.IsTrue(group.Students.Contains(student));
         }
 
         [Test]
@@ -31,11 +31,10 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-                int studentIndex = 1;
                 Group @group = _isuService.AddGroup("M3200"); 
-                while (true)
+                for (int i = 0; i < 31; ++i)
                 {
-                    _isuService.AddStudent(group, $"The {studentIndex}st Fredy's Slave");
+                    _isuService.AddStudent(group, $"The {i}st Fredy's Slave");
                 }
             });
         }

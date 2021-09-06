@@ -1,4 +1,5 @@
-﻿using Isu.Tools;
+﻿using System;
+using Isu.Tools;
 
 namespace Isu.Entities
 {
@@ -6,13 +7,13 @@ namespace Isu.Entities
     {
         public CourseNumber(int courseNumber)
         {
-            if (Number > 0 && Number < 10)
+            if (courseNumber > 0 && courseNumber < 10)
             {
                 Number = courseNumber;
             }
             else
             {
-                throw new IsuException("wrong range of course number");
+                throw new IsuException($"wrong range of course number: {Number}");
             }
         }
 
