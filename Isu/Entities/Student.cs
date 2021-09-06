@@ -9,6 +9,7 @@ namespace Isu.Entities
             Name = name;
             Uuid = Guid.NewGuid();
             StudentGroup = studentGroup;
+            studentGroup.AddStudent(this);
         }
 
         public Guid Uuid { get; }

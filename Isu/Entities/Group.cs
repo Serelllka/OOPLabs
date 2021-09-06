@@ -19,9 +19,11 @@ namespace Isu.Entities
             GroupName = name;
             Guid.NewGuid();
             ListOfStudents = new List<Student>();
+            MaxStudentsAmount = 30;
         }
 
         public string GroupName { get; set; }
+        public int MaxStudentsAmount { get; }
 
         public List<Student> ListOfStudents
         {
@@ -32,6 +34,10 @@ namespace Isu.Entities
         public void AddStudent(Student newStudent)
         {
             ListOfStudents.Add(newStudent);
+            if (ListOfStudents.Count > 30)
+            {
+                throw new IsuException("the maximum number of students has been exceeded");
+            }
         }
     }
 }
