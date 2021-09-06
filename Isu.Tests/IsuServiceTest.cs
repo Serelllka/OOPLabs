@@ -12,7 +12,7 @@ namespace Isu.Tests
         public void Setup()
         {
             //TODO: implement
-            _isuService = null;
+            _isuService = new IsuService();
         }
 
         [Test]
