@@ -38,15 +38,11 @@ namespace Isu.Services
 
         public Student GetStudent(Guid id)
         {
-            foreach (Student student in _students)
-            {
-                if (student.Uuid == id)
-                {
-                    return student;
-                }
-            }
+            Student foundedStudent = _students.SingleOrDefault(student => student.Uuid == id);
 
-            throw new NotImplementedException();
+            if (foundedStudent == null)
+                throw new NotImplementedException();
+            return foundedStudent;
         }
 
         public Student FindStudent(string name)
@@ -71,15 +67,7 @@ namespace Isu.Services
 
         public Group FindGroup(string groupName)
         {
-            foreach (Group group in _groups)
-            {
-                if (group.GroupName == groupName)
-                {
-                    return group;
-                }
-            }
-
-            return null;
+            return _groups.FirstOrDefault(group => group.GroupName == groupName);
         }
 
         public List<Group> FindGroups(CourseNumber courseNumber)

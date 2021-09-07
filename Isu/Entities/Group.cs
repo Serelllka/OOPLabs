@@ -17,7 +17,6 @@ namespace Isu.Entities
             GroupName = name;
             Students = new List<Student>();
             Course = new CourseNumber(name[2] - '0');
-            System.Console.WriteLine(Course);
             MaxStudentsAmount = 30;
         }
 
