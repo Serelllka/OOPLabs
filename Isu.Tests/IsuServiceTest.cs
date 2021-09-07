@@ -1,3 +1,4 @@
+using System.Linq;
 using Isu.Entities;
 using Isu.Services;
 using Isu.Tools;
@@ -23,7 +24,7 @@ namespace Isu.Tests
             Student student = _isuService.AddStudent(group, "F*ckingSlave");
             
             Assert.AreEqual(student.StudentGroup, group);
-            Assert.IsTrue(group.Students.Contains(student));
+            Assert.IsTrue(group.Students.ToList().Contains(student));
         }
 
         [Test]

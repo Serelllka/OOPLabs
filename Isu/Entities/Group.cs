@@ -7,6 +7,7 @@ namespace Isu.Entities
 {
     public class Group
     {
+        private List<Student> _students;
         public Group(string name)
         {
             if (!Regex.IsMatch(name, "M3[1-4][0-9][0-9]"))
@@ -15,24 +16,34 @@ namespace Isu.Entities
             }
 
             GroupName = name;
-            Students = new List<Student>();
+            _students = new List<Student>();
             Course = new CourseNumber(name[2] - '0');
             MaxStudentsAmount = 30;
         }
 
         public string GroupName { get; set; }
         public int MaxStudentsAmount { get; }
-        public List<Student> Students { get; }
+        public IReadOnlyList<Student> Students => _students;
         public CourseNumber Course { get; }
 
         public void AddStudent(Student newStudent)
         {
-            if (Students.Count >= 30)
+            if (Students.Count >= MaxStudentsAmount)
             {
                 throw new IsuException("the maximum number of students has been exceeded");
             }
 
-            Students.Add(newStudent);
+            _students.Add(newStudent);
+        }
+
+        public void RemoveStudent(Student student)
+        {
+            if (student == null)
+            {
+                throw new IsuException("the student doesnt exist");
+            }
+
+            _students.Remove(student);
         }
     }
 }

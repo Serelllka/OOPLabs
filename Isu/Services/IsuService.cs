@@ -77,9 +77,9 @@ namespace Isu.Services
 
         public void ChangeStudentGroup(Student student, Group newGroup)
         {
-            student.StudentGroup.Students.Remove(student);
+            student.StudentGroup.RemoveStudent(student);
             student.StudentGroup = newGroup;
-            newGroup.Students.Add(student);
+            newGroup.AddStudent(student);
         }
     }
 }
