@@ -9,11 +9,11 @@ namespace Isu.Entities
         {
             StudentGroup = studentGroup ?? throw new IsuException("Group is null");
             Name = name;
-            Uuid = Guid.NewGuid();
+            Id = Guid.NewGuid();
             studentGroup.AddStudent(this);
         }
 
-        public Guid Uuid { get; }
+        public Guid Id { get; }
         public string Name { get; }
         public Group StudentGroup { get; set; }
     }

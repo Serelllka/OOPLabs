@@ -7,14 +7,12 @@ namespace Isu.Entities
     {
         public CourseNumber(int courseNumber)
         {
-            if (courseNumber > 0 && courseNumber < 10)
-            {
-                Number = courseNumber;
-            }
-            else
+            if (courseNumber < 1 || courseNumber > 9)
             {
                 throw new IsuException($"wrong range of course number: {Number}");
             }
+
+            Number = courseNumber;
         }
 
         public int Number { get; }

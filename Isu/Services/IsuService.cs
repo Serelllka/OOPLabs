@@ -38,10 +38,10 @@ namespace Isu.Services
 
         public Student GetStudent(Guid id)
         {
-            Student foundedStudent = _students.SingleOrDefault(student => student.Uuid == id);
+            Student foundedStudent = _students.SingleOrDefault(student => student.Id == id);
 
             if (foundedStudent == null)
-                throw new NotImplementedException();
+                throw new IsuException("The student was not found");
             return foundedStudent;
         }
 
