@@ -47,15 +47,7 @@ namespace Isu.Services
 
         public Student FindStudent(string name)
         {
-            foreach (Student student in _students)
-            {
-                if (student.Name == name)
-                {
-                    return student;
-                }
-            }
-
-            return null;
+            return _students.FirstOrDefault(student => student.Name == name);
         }
 
         public List<Student> FindStudents(string groupName)
