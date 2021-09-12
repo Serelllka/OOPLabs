@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security;
 using Shops.Tools;
 
 namespace Shops.Entities
@@ -30,7 +28,7 @@ namespace Shops.Entities
         {
             if (!_products.ContainsKey(product))
             {
-                throw new ShopException();
+                throw new ShopException("This shop doesn't contain this product");
             }
 
             _products[product].Count += count;
@@ -40,12 +38,12 @@ namespace Shops.Entities
         {
             if (!_products.ContainsKey(product))
             {
-                throw new ShopException();
+                throw new ShopException("This shop doesn't contain this product");
             }
 
             if (_products[product].Count < count)
             {
-                throw new ShopException();
+                throw new ShopException("This shop doesn't contain required quantity of this product");
             }
 
             _products[product].Count -= count;
@@ -55,7 +53,7 @@ namespace Shops.Entities
         {
             if (!_products.ContainsKey(product))
             {
-                throw new ShopException();
+                throw new ShopException("This shop doesn't contain this product");
             }
 
             _products[product].Price = newPrice;
