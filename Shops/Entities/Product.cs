@@ -8,7 +8,7 @@ namespace Shops.Entities
         public Product(string name)
         {
             Name = name;
-            Id = new Guid();
+            Id = default(Guid);
         }
 
         public string Name { get; }
