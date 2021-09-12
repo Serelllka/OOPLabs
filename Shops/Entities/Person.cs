@@ -2,7 +2,7 @@
 {
     public class Person
     {
-        Person(string name, uint moneyAmount)
+        public Person(string name, uint moneyAmount)
         {
             Name = name;
             Balance = moneyAmount;

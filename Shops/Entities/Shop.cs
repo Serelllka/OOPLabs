@@ -17,6 +17,10 @@ namespace Shops.Entities
             Name = name;
         }
 
+        public Guid Id { get; }
+
+        public string Name { get; set; }
+
         public void RegisterProduct(Product product, uint price, uint count = 0)
         {
             _products.Add(product, new ShopItem(price, count));
@@ -31,7 +35,6 @@ namespace Shops.Entities
 
             _products[product].Count += count;
         }
-
 
         public void ReserveProducts(Product product, uint count)
         {
@@ -62,7 +65,7 @@ namespace Shops.Entities
         {
             foreach (KeyValuePair<Product, uint> item in shoppingList)
             {
-                if (_products.ContainsKey(item.Key))
+                if (!_products.ContainsKey(item.Key))
                 {
                     throw new ShopException();
                 }
@@ -82,8 +85,19 @@ namespace Shops.Entities
             }
         }
 
-        public Guid Id { get; }
+        public ShopItem GetProductInfo(Product product)
+        {
+            if (!_products.ContainsKey(product))
+            {
+                throw new ShopException();
+            }
 
-        public string Name { get; set; }
+            return _products[product];
+        }
+
+        public bool ContainsProduct(Product product)
+        {
+            return _products.ContainsKey(product);
+        }
     }
 }
