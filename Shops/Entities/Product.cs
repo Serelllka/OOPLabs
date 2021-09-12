@@ -1,4 +1,5 @@
-﻿using Shops.Tools;
+﻿using System;
+using Shops.Tools;
 
 namespace Shops.Entities
 {
@@ -6,27 +7,11 @@ namespace Shops.Entities
     {
         public Product(string name)
         {
-            Count = 0;
             Name = name;
+            Id = new Guid();
         }
 
-        public string Name { get; set; }
-
-        public int Count { get; private set; }
-
-        public void AddProduct(int delta)
-        {
-            Count += delta;
-        }
-
-        public void ReserveProduct(int delta)
-        {
-            if (delta > Count)
-            {
-                throw new ShopException("Invalid value of count");
-            }
-
-            Count -= delta;
-        }
+        public string Name { get; }
+        public Guid Id { get; }
     }
 }

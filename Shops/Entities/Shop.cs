@@ -63,25 +63,25 @@ namespace Shops.Entities
 
         public void Buy(Person person, IReadOnlyDictionary<Product, uint> shoppingList)
         {
-            foreach (KeyValuePair<Product, uint> item in shoppingList)
+            foreach ((Product product, uint count) in shoppingList)
             {
-                if (!_products.ContainsKey(item.Key))
+                if (!_products.ContainsKey(product))
                 {
-                    throw new ShopException();
+                    throw new ShopException("This shop doesn't contain this product");
                 }
 
-                if (_products[item.Key].Count < item.Value)
+                if (_products[product].Count < count)
                 {
-                    throw new ShopException();
+                    throw new ShopException("This shop doesn't contain required quantity of this product");
                 }
 
-                if (_products[item.Key].Price * item.Value > person.Balance)
+                if (_products[product].Price * count > person.Balance)
                 {
-                    throw new ShopException();
+                    throw new ShopException("This person doesn't have required amount of money");
                 }
 
-                _products[item.Key].Count -= item.Value;
-                person.Balance -= _products[item.Key].Price * item.Value;
+                _products[product].Count -= count;
+                person.Balance -= _products[product].Price * count;
             }
         }
 
@@ -89,7 +89,7 @@ namespace Shops.Entities
         {
             if (!_products.ContainsKey(product))
             {
-                throw new ShopException();
+                throw new ShopException("This shop doesn't contain this product");
             }
 
             return _products[product];
