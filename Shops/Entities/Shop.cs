@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Shops.Tools;
 
 namespace Shops.Entities
@@ -96,6 +97,12 @@ namespace Shops.Entities
         public bool ContainsProduct(Product product)
         {
             return _products.ContainsKey(product);
+        }
+
+        public IReadOnlyList<Product> GetListOfProducts()
+        {
+            List<Product> list = _products.Select(item => item.Key).ToList();
+            return list;
         }
     }
 }

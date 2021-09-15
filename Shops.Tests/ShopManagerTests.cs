@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Shops.Entities;
 using Shops.Services;
 using Shops.Tools;
+using Shops.UI;
 
 namespace Shops.Tests
 {
@@ -80,7 +81,7 @@ namespace Shops.Tests
             shop4.RegisterProduct(cheese, 1, 2000);
             shop4.RegisterProduct(lard, 1000, 1000);
             
-            Assert.AreEqual(_shopManager.FindOptimalShop(shoppingList), shop3);
+            Assert.AreEqual(_shopManager.FindOptimalShop(shoppingList), shop4);
         }
         
         [Test]
