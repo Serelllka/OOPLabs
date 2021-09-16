@@ -43,6 +43,7 @@ namespace Shops.UI.Menu
 
             Product selectedProduct = _products[_selectionOptions.IndexOf(Choice)];
             return new ItemMenu(
+                _shop,
                 selectedProduct,
                 _shop.GetProductInfo(selectedProduct),
                 _shoppingList,

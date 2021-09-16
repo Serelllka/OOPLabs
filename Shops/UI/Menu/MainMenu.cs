@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using Shops.Entities;
 using Shops.Services;
 using Shops.Tools;
@@ -53,7 +51,7 @@ namespace Shops.UI.Menu
                 return _prevMenu;
             }
 
-            throw new System.NotImplementedException();
+            throw new ShopException();
         }
 
         public void UpdateTable()

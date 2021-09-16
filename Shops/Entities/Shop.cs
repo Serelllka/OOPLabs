@@ -84,6 +84,14 @@ namespace Shops.Entities
             }
         }
 
+        public void Buy(Person person, Product product, uint count)
+        {
+            Dictionary<Product, uint> shoppingList;
+            shoppingList = new Dictionary<Product, uint>();
+            shoppingList.Add(product, count);
+            Buy(person, shoppingList);
+        }
+
         public ShopItem GetProductInfo(Product product)
         {
             if (!_products.ContainsKey(product))
@@ -101,7 +109,7 @@ namespace Shops.Entities
 
         public IReadOnlyList<Product> GetListOfProducts()
         {
-            List<Product> list = _products.Select(item => item.Key).ToList();
+            var list = _products.Select(item => item.Key).ToList();
             return list;
         }
     }
