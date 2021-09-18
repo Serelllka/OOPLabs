@@ -2,9 +2,9 @@
 {
     public interface IMenu
     {
-        public void Show();
-        public IMenu GenerateNextMenu();
+        void Show();
+        IMenu GenerateNextMenu();
 
-        public void UpdateTable();
+        void UpdateTable();
     }
 }

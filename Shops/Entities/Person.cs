@@ -9,7 +9,6 @@
         }
 
         public string Name { get; }
-
         public uint Balance { get; set; }
     }
 }
