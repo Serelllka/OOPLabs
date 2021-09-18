@@ -17,8 +17,8 @@ namespace Shops
             const int priceBefore = 300;
             const int priceAfter = 228;
 
-            Shop shop = shopManager.Create("Dungeon");
-            shopManager.Create("NeDungeon");
+            Shop shop = shopManager.CreateShop("Dungeon");
+            shopManager.CreateShop("NeDungeon");
             Product cocaine = shopManager.RegisterProduct("Cocaine");
             Product cheese = shopManager.RegisterProduct("Russian's Cheese");
             Product lard = shopManager.RegisterProduct("Lard");

@@ -27,7 +27,7 @@ namespace Shops.Tests
             const int productToBuyCount = 3;
 
             var person = new Person("Billy Herrington", moneyBefore);
-            Shop shop = _shopManager.Create("VisitingDungeonMaster");
+            Shop shop = _shopManager.CreateShop("VisitingDungeonMaster");
             Product product = _shopManager.RegisterProduct("Fisting");
 
             var shoppingList = new Dictionary<Product, uint>();
@@ -46,7 +46,7 @@ namespace Shops.Tests
             const int priceBefore = 300;
             const int priceAfter = 228;
 
-            Shop shop = _shopManager.Create("Dungeon");
+            Shop shop = _shopManager.CreateShop("Dungeon");
             Product product = _shopManager.RegisterProduct("Cocaine");
             
             shop.RegisterProduct(product, priceBefore, 5);
@@ -58,10 +58,10 @@ namespace Shops.Tests
         [Test]
         public void FindTheLowestPrice()
         {
-            Shop shop1 = _shopManager.Create("Shop1");
-            Shop shop2 = _shopManager.Create("Shop2");
-            Shop shop3 = _shopManager.Create("Shop3");
-            Shop shop4 = _shopManager.Create("Shop4");
+            Shop shop1 = _shopManager.CreateShop("Shop1");
+            Shop shop2 = _shopManager.CreateShop("Shop2");
+            Shop shop3 = _shopManager.CreateShop("Shop3");
+            Shop shop4 = _shopManager.CreateShop("Shop4");
 
             Product cheese = _shopManager.RegisterProduct("Russian's Cheese");
             Product lard = _shopManager.RegisterProduct("Ukrainian's Lard");
@@ -98,7 +98,7 @@ namespace Shops.Tests
             const int lardToBuyCount = 4;
 
             var person = new Person("Billy Herrington", moneyBefore);
-            Shop shop = _shopManager.Create("VisitingDungeonMaster");
+            Shop shop = _shopManager.CreateShop("VisitingDungeonMaster");
             
             Product cheese = _shopManager.RegisterProduct("Russian's Cheese");
             Product lard = _shopManager.RegisterProduct("Ukrainian's Lard");

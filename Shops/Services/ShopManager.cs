@@ -18,7 +18,7 @@ namespace Shops.Services
         public IReadOnlyList<Shop> Shops => _shops;
         public IReadOnlyList<Product> Products => _products;
 
-        public Shop Create(string name)
+        public Shop CreateShop(string name)
         {
             var shop = new Shop(name);
             _shops.Add(shop);
@@ -34,27 +34,20 @@ namespace Shops.Services
 
         public Shop FindOptimalShop(IReadOnlyDictionary<Product, uint> shoppingList)
         {
-            var suitableShops = new List<Shop>();
-
+            uint minPurchaseAmount = uint.MaxValue;
+            Shop obtainedShop = null;
             foreach (Shop shop in _shops)
             {
                 if (shoppingList.All(item => shop.ContainsProduct(item.Key)
                                              && shop.GetProductInfo(item.Key).Count >= item.Value))
                 {
-                    suitableShops.Add(shop);
+                    uint purchaseAmount = shoppingList.Aggregate<KeyValuePair<Product, uint>, uint>(
+                        0, (current, item) => current + (item.Value * shop.GetProductInfo(item.Key).Price));
+
+                    if (purchaseAmount >= minPurchaseAmount) continue;
+                    minPurchaseAmount = purchaseAmount;
+                    obtainedShop = shop;
                 }
-            }
-
-            uint minPurchaseAmount = uint.MaxValue;
-            Shop obtainedShop = suitableShops[0];
-            foreach (Shop shop in suitableShops)
-            {
-                uint purchaseAmount = shoppingList.Aggregate<KeyValuePair<Product, uint>, uint>(
-                    0, (current, item) => current + (item.Value * shop.GetProductInfo(item.Key).Price));
-
-                if (purchaseAmount >= minPurchaseAmount) continue;
-                minPurchaseAmount = purchaseAmount;
-                obtainedShop = shop;
             }
 
             return obtainedShop;
