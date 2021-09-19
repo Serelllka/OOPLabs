@@ -6,60 +6,46 @@ using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
-    public class MainMenu : IMenu
+    public class MainMenu : Menu, IMenu
     {
-        private IMenu _prevMenu;
         private ShopManager _shopManager;
         private Person _person;
         private List<ShoppingListItem> _shoppingList;
-        private List<string> _selectionOptions;
 
         public MainMenu(ShopManager shopManager, Person person, List<ShoppingListItem> shoppingList, IMenu prevMenu = null)
+            : base(prevMenu)
         {
-            _prevMenu = prevMenu;
             _person = person;
             _shoppingList = shoppingList;
             _shopManager = shopManager;
-            UpdateTable();
-        }
-
-        public string Choice { get; private set; }
-
-        public void Show()
-        {
-            UpdateTable();
-            Choice = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .PageSize(10)
-                    .AddChoices(_selectionOptions));
         }
 
         public IMenu GenerateNextMenu()
         {
-            if (Choice == _selectionOptions[0])
-            {
-                return new CartMenu(_shopManager, _person, _shoppingList, this);
-            }
-
-            if (Choice == _selectionOptions[1])
+            if (Choice == "List of shops")
             {
                 return new ShopsMenu(_shopManager.Shops, _shoppingList, this);
             }
 
-            if (_selectionOptions.Count > 2 && Choice == _selectionOptions[2])
+            if (Choice == "Shopping List")
             {
-                return _prevMenu;
+                return new CartMenu(_person, _shoppingList, this);
+            }
+
+            if (SelectionOptions.Count > 2 && Choice == SelectionOptions[2])
+            {
+                return PrevMenu;
             }
 
             throw new ShopException();
         }
 
-        public void UpdateTable()
+        public override void UpdateTable()
         {
-            _selectionOptions = new List<string>() { "Shopping List", "List of shops" };
-            if (_prevMenu != null)
+            SelectionOptions = new List<string> { "List of shops", "Shopping List" };
+            if (PrevMenu != null)
             {
-                _selectionOptions.Add("Back");
+                SelectionOptions.Add("Back");
             }
         }
     }

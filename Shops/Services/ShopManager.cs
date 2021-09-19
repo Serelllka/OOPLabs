@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Shops.Entities;
+using Shops.Tools;
 
 namespace Shops.Services
 {
@@ -20,6 +21,11 @@ namespace Shops.Services
 
         public Shop CreateShop(string name)
         {
+            if (name == null)
+            {
+                throw new ShopException("Can't create shop with null name");
+            }
+
             var shop = new Shop(name);
             _shops.Add(shop);
             return shop;
@@ -27,24 +33,31 @@ namespace Shops.Services
 
         public Product RegisterProduct(string name)
         {
+            if (name == null)
+            {
+                throw new ShopException("Can't create shop with null name");
+            }
+
             var product = new Product(name);
             _products.Add(product);
             return product;
         }
 
-        public Shop FindOptimalShop(IReadOnlyDictionary<Product, uint> shoppingList)
+        public Shop FindOptimalShopByPrice(IReadOnlyDictionary<Product, Count> shoppingList)
         {
             uint minPurchaseAmount = uint.MaxValue;
             Shop obtainedShop = null;
             foreach (Shop shop in _shops)
             {
-                if (shoppingList.All(item => shop.ContainsProduct(item.Key)
-                                             && shop.GetProductInfo(item.Key).Count >= item.Value))
+                if (!shop.ContainsProducts(shoppingList))
                 {
-                    uint purchaseAmount = shoppingList.Aggregate<KeyValuePair<Product, uint>, uint>(
-                        0, (current, item) => current + (item.Value * shop.GetProductInfo(item.Key).Price));
+                    continue;
+                }
 
-                    if (purchaseAmount >= minPurchaseAmount) continue;
+                uint purchaseAmount = shop.CalculatePriceOfShoppingList(shoppingList);
+
+                if (purchaseAmount < minPurchaseAmount)
+                {
                     minPurchaseAmount = purchaseAmount;
                     obtainedShop = shop;
                 }

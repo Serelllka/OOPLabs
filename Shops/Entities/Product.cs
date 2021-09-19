@@ -7,7 +7,7 @@ namespace Shops.Entities
     {
         public Product(string name)
         {
-            Name = name;
+            Name = name ?? throw new ShopException("Can't create product with null name");
             Id = Guid.NewGuid();
         }
 

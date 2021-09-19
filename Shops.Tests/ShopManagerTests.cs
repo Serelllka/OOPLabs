@@ -19,7 +19,7 @@ namespace Shops.Tests
         }
 
         [Test]
-        public void AddShopAndProduct()
+        public void AddShopAndProductPersonBuyProduct_PersonMoneyDecreases()
         {
             const int moneyBefore = 300;
             const int productPrice = 30;
@@ -30,8 +30,8 @@ namespace Shops.Tests
             Shop shop = _shopManager.CreateShop("VisitingDungeonMaster");
             Product product = _shopManager.RegisterProduct("Fisting");
 
-            var shoppingList = new Dictionary<Product, uint>();
-            shoppingList.Add(product, productToBuyCount);
+            var shoppingList = new Dictionary<Product, Count>();
+            shoppingList.Add(product, new Count(productToBuyCount));
             
             shop.RegisterProduct(product, productPrice, productCount);
             shop.Buy(person, shoppingList);
@@ -41,7 +41,7 @@ namespace Shops.Tests
         }
 
         [Test]
-        public void SutUpNewPrice()
+        public void SutUpNewPrice_ProductPriceChanges()
         {
             const int priceBefore = 300;
             const int priceAfter = 228;
@@ -55,8 +55,7 @@ namespace Shops.Tests
             Assert.AreEqual(shop.GetProductInfo(product).Price, priceAfter);
         }
 
-        [Test]
-        public void FindTheLowestPrice()
+        [Test] public void FindTheLowestPrice_ReturnShopWithMinimumTotalPrice()
         {
             Shop shop1 = _shopManager.CreateShop("Shop1");
             Shop shop2 = _shopManager.CreateShop("Shop2");
@@ -66,9 +65,9 @@ namespace Shops.Tests
             Product cheese = _shopManager.RegisterProduct("Russian's Cheese");
             Product lard = _shopManager.RegisterProduct("Ukrainian's Lard");
             
-            var shoppingList = new Dictionary<Product, uint>();
-            shoppingList.Add(cheese, 2);
-            shoppingList.Add(lard, 4);
+            var shoppingList = new Dictionary<Product, Count>();
+            shoppingList.Add(cheese, new Count(2));
+            shoppingList.Add(lard, new Count(4));
             
             shop1.RegisterProduct(cheese, 10, 2);
             shop1.RegisterProduct(lard, 1, 3);
@@ -81,11 +80,11 @@ namespace Shops.Tests
             shop4.RegisterProduct(cheese, 1, 2000);
             shop4.RegisterProduct(lard, 1000, 1000);
             
-            Assert.AreEqual(_shopManager.FindOptimalShop(shoppingList), shop3);
+            Assert.AreEqual(_shopManager.FindOptimalShopByPrice(shoppingList), shop3);
         }
         
         [Test]
-        public void BuyUsingShoppingList()
+        public void BuyUsingShoppingList_ReduceProductsAmountInShop()
         {
             const int moneyBefore = 300;
             
@@ -103,9 +102,9 @@ namespace Shops.Tests
             Product cheese = _shopManager.RegisterProduct("Russian's Cheese");
             Product lard = _shopManager.RegisterProduct("Ukrainian's Lard");
             
-            var shoppingList = new Dictionary<Product, uint>();
-            shoppingList.Add(cheese, cheeseToBuyCount);
-            shoppingList.Add(lard, lardToBuyCount);
+            var shoppingList = new Dictionary<Product, Count>();
+            shoppingList.Add(cheese, new Count(cheeseToBuyCount));
+            shoppingList.Add(lard, new Count(lardToBuyCount));
             
             shop.RegisterProduct(cheese, cheesePrice, cheeseCount);
             shop.RegisterProduct(lard, lardPrice, lardCount);
@@ -115,6 +114,25 @@ namespace Shops.Tests
             Assert.AreEqual(moneyBefore - lardPrice * lardToBuyCount - cheesePrice * cheeseToBuyCount, person.Balance);
             Assert.AreEqual(cheeseCount - cheeseToBuyCount, shop.GetProductInfo(cheese).Count);
             Assert.AreEqual(lardCount - lardToBuyCount, shop.GetProductInfo(lard).Count);
+        }
+
+        [Test]
+        public void GiveNullParameters_ThrowsException()
+        {
+            Assert.Catch<ShopException>(() =>
+            {
+                var person = new Person(null, 1000);
+            });
+
+            Assert.Catch<ShopException>(() =>
+            {
+                Shop shop = _shopManager.CreateShop(null);
+            });
+
+            Assert.Catch<ShopException>(() =>
+            {
+                Product product = _shopManager.RegisterProduct(null);
+            });
         }
     }
 }

@@ -7,40 +7,22 @@ using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
-    public class CartMenu : IMenu
+    public class CartMenu : Menu, IMenu
     {
-        private ShopManager _shopManager;
-        private List<string> _selectionOptions;
-        private Table _table;
         private Person _person;
-        private IMenu _prevMenu;
         private List<ShoppingListItem> _shoppingList;
-        public CartMenu(ShopManager shopManager, Person person, List<ShoppingListItem> shoppingList, IMenu prevMenu)
+        public CartMenu(Person person, List<ShoppingListItem> shoppingList, IMenu prevMenu)
+            : base(prevMenu)
         {
             _person = person;
-            _shopManager = shopManager;
-            _prevMenu = prevMenu;
             _shoppingList = shoppingList;
-            UpdateTable();
-        }
-
-        public string Choice { get; private set; }
-
-        public void Show()
-        {
-            UpdateTable();
-            AnsiConsole.Render(_table);
-            Choice = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .PageSize(10)
-                    .AddChoices(_selectionOptions));
         }
 
         public IMenu GenerateNextMenu()
         {
-            if (Choice == _selectionOptions[^1])
+            if (Choice == SelectionOptions[^1])
             {
-                return _prevMenu;
+                return PrevMenu;
             }
 
             if (Choice == "Buy")
@@ -61,16 +43,16 @@ namespace Shops.UI.Menu
             throw new ShopException("CartMenu can't handle this choice");
         }
 
-        public void UpdateTable()
+        public override void UpdateTable()
         {
-            _table = new Table();
-            _selectionOptions = new List<string>();
-            _table.AddColumns("N", "Title", "Amount", "Price", "Total");
+            Table = new Table();
+            SelectionOptions = new List<string>();
+            Table.AddColumns("N", "Title", "Amount", "Price", "Total");
             uint number = 1;
             uint totalPrice = 0;
             foreach (ShoppingListItem item in _shoppingList)
             {
-                _table.AddRow(
+                Table.AddRow(
                     number.ToString(),
                     item.Name,
                     item.Count.ToString(),
@@ -80,19 +62,19 @@ namespace Shops.UI.Menu
                 number += 1;
             }
 
-            _table.AddRow("-", "-", "-", "-", "-");
-            _table.AddRow("Person:", _person.Name, "Balance:", _person.Balance.ToString());
+            Table.AddRow("-", "-", "-", "-", "-");
+            Table.AddRow("Person:", _person.Name, "Balance:", _person.Balance.ToString());
             if (_person.Balance < totalPrice)
             {
-                _table.AddRow("Not enough money ", "Total price:", totalPrice.ToString(), "-", "-");
-                _selectionOptions.Add("-"); // this field is added because one field is not displayed correctly
+                Table.AddRow("Not enough money ", "Total price:", totalPrice.ToString(), "-", "-");
+                SelectionOptions.Add("-"); // this field is added because one field is not displayed correctly
             }
             else
             {
-                _selectionOptions.Add("Buy");
+                SelectionOptions.Add("Buy");
             }
 
-            _selectionOptions.Add("Back");
+            SelectionOptions.Add("Back");
         }
     }
 }

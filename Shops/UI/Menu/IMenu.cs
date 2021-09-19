@@ -1,4 +1,6 @@
-﻿namespace Shops.UI.Menu
+﻿using Spectre.Console;
+
+namespace Shops.UI.Menu
 {
     public interface IMenu
     {

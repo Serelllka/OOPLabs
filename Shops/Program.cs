@@ -12,7 +12,7 @@ namespace Shops
     {
         private static void Main()
         {
-            ShopManager shopManager = new ShopManager();
+            var shopManager = new ShopManager();
 
             const int priceBefore = 300;
             const int priceAfter = 228;
@@ -28,9 +28,9 @@ namespace Shops
             shop.RegisterProduct(lard, priceBefore, 20);
             shop.ChangePrice(cocaine, priceAfter);
 
-            Person person = new Person("Igor", 300);
+            var person = new Person("Igor", 300);
+            var menuManager = new MenuManager(shopManager, person);
 
-            MenuManager menuManager = new MenuManager(shopManager, person);
             menuManager.Start();
         }
     }
