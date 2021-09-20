@@ -1,26 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using Shops.Entities;
 using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
-    public class ProductsMenu : Menu, IMenu
+    public class ProductsMenu : Menu
     {
-        private List<ShoppingListItem> _shoppingList;
         private Shop _shop;
         private IReadOnlyList<Product> _products;
 
         public ProductsMenu(Shop shop, List<ShoppingListItem> shoppingList, IMenu prevMenu)
-            : base(prevMenu)
+            : base(prevMenu, shoppingList)
         {
-            _shoppingList = shoppingList;
             _shop = shop;
         }
 
-        public IMenu GenerateNextMenu()
+        public override IMenu GenerateNextMenu()
         {
-            if (Choice == SelectionOptions[^1])
+            if (Choice == "Back")
             {
                 return PrevMenu;
             }
@@ -30,7 +27,7 @@ namespace Shops.UI.Menu
                 _shop,
                 selectedProduct,
                 _shop.GetProductInfo(selectedProduct),
-                _shoppingList,
+                ShoppingList,
                 this);
         }
 

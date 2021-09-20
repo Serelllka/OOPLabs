@@ -2,50 +2,68 @@
 using Shops.Entities;
 using Shops.Services;
 using Shops.Tools;
-using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
-    public class MainMenu : Menu, IMenu
+    public class MainMenu : Menu
     {
         private ShopManager _shopManager;
         private Person _person;
-        private List<ShoppingListItem> _shoppingList;
 
         public MainMenu(ShopManager shopManager, Person person, List<ShoppingListItem> shoppingList, IMenu prevMenu = null)
-            : base(prevMenu)
+            : base(prevMenu, shoppingList)
         {
             _person = person;
-            _shoppingList = shoppingList;
             _shopManager = shopManager;
         }
 
-        public IMenu GenerateNextMenu()
+        public override IMenu GenerateNextMenu()
         {
             if (Choice == "List of shops")
             {
-                return new ShopsMenu(_shopManager.Shops, _shoppingList, this);
+                return new ShopsMenu(_shopManager.Shops, ShoppingList, this);
             }
 
             if (Choice == "Shopping List")
             {
-                return new CartMenu(_person, _shoppingList, this);
+                return new CartMenu(_person, ShoppingList, this);
             }
 
-            if (SelectionOptions.Count > 2 && Choice == SelectionOptions[2])
+            if (Choice == "Back")
             {
                 return PrevMenu;
             }
 
-            throw new ShopException();
+            if (Choice == "-")
+            {
+                return this;
+            }
+
+            throw new ShopException("MainMenu can't handle this choice");
         }
 
         public override void UpdateTable()
         {
-            SelectionOptions = new List<string> { "List of shops", "Shopping List" };
+            SelectionOptions = new List<string>();
+
+            if (_shopManager.Shops.Count > 0)
+            {
+                SelectionOptions.Add("List of shops");
+            }
+
+            if (ShoppingList.Count > 0)
+            {
+                SelectionOptions.Add("Shopping List");
+            }
+
             if (PrevMenu != null)
             {
                 SelectionOptions.Add("Back");
+            }
+
+            if (SelectionOptions.Count == 1)
+            {
+                SelectionOptions.Add("-");  // this field is added because one field is not displayed correctly
             }
         }
     }

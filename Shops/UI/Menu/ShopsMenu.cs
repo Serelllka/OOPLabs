@@ -1,30 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Shops.Entities;
 using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
-    public class ShopsMenu : Menu, IMenu
+    public class ShopsMenu : Menu
     {
         private IReadOnlyList<Shop> _shops;
-        private List<ShoppingListItem> _shoppingList;
 
         public ShopsMenu(IReadOnlyList<Shop> shops, List<ShoppingListItem> shoppingList, IMenu prevMenu)
-            : base(prevMenu)
+            : base(prevMenu, shoppingList)
         {
             _shops = shops;
-            _shoppingList = shoppingList;
         }
 
-        public IMenu GenerateNextMenu()
+        public override IMenu GenerateNextMenu()
         {
-            if (Choice == SelectionOptions[^1])
+            if (Choice == "Back")
             {
                 return PrevMenu;
             }
 
-            return new ProductsMenu(_shops[SelectionOptions.IndexOf(Choice)], _shoppingList, this);
+            return new ProductsMenu(_shops[SelectionOptions.IndexOf(Choice)], ShoppingList, this);
         }
 
         public override void UpdateTable()

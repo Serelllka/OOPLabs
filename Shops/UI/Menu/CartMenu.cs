@@ -1,33 +1,25 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using Shops.Entities;
-using Shops.Services;
+using Shops.Models;
 using Shops.Tools;
 using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
-    public class CartMenu : Menu, IMenu
+    public class CartMenu : Menu
     {
         private Person _person;
-        private List<ShoppingListItem> _shoppingList;
         public CartMenu(Person person, List<ShoppingListItem> shoppingList, IMenu prevMenu)
-            : base(prevMenu)
+            : base(prevMenu, shoppingList)
         {
             _person = person;
-            _shoppingList = shoppingList;
         }
 
-        public IMenu GenerateNextMenu()
+        public override IMenu GenerateNextMenu()
         {
-            if (Choice == SelectionOptions[^1])
-            {
-                return PrevMenu;
-            }
-
             if (Choice == "Buy")
             {
-                foreach (ShoppingListItem item in _shoppingList)
+                foreach (ShoppingListItem item in ShoppingList)
                 {
                     item.BuyThisItem(_person);
                 }
@@ -40,6 +32,11 @@ namespace Shops.UI.Menu
                 return this;
             }
 
+            if (Choice == "Back")
+            {
+                return PrevMenu;
+            }
+
             throw new ShopException("CartMenu can't handle this choice");
         }
 
@@ -50,7 +47,7 @@ namespace Shops.UI.Menu
             Table.AddColumns("N", "Title", "Amount", "Price", "Total");
             uint number = 1;
             uint totalPrice = 0;
-            foreach (ShoppingListItem item in _shoppingList)
+            foreach (ShoppingListItem item in ShoppingList)
             {
                 Table.AddRow(
                     number.ToString(),

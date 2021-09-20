@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Shops.Entities;
 using Shops.Services;
+using Shops.Tools;
 using Shops.UI.Menu;
 using Spectre.Console;
 
@@ -14,8 +14,8 @@ namespace Shops.UI
 
         public MenuManager(ShopManager shopManager, Person person)
         {
-            _person = person;
-            _shopManager = shopManager;
+            _person = person ?? throw new ShopException("Person can't be null");
+            _shopManager = shopManager ?? throw new ShopException("ShopManager can't be null");
         }
 
         public void Start()

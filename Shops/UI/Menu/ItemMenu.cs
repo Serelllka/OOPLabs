@@ -6,46 +6,42 @@ using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
-    public class ItemMenu : Menu, IMenu
+    public class ItemMenu : Menu
     {
-        private Table _table;
-
         private Shop _shop;
-        private List<ShoppingListItem> _shoppingList;
         private Product _product;
         private ShopItem _shopItem;
 
         public ItemMenu(Shop shop, Product product, ShopItem shopItem, List<ShoppingListItem> shoppingList, IMenu prevMenu)
-            : base(prevMenu)
+            : base(prevMenu, shoppingList)
         {
             _shop = shop;
             _product = product;
             _shopItem = shopItem;
-            _shoppingList = shoppingList;
         }
 
-        public IMenu GenerateNextMenu()
+        public override IMenu GenerateNextMenu()
         {
-            if (Choice == SelectionOptions[^1])
-            {
-                return PrevMenu;
-            }
-
             if (Choice == "Add to card")
             {
-                if (_shoppingList.All(item => !Equals(item.Item, _product)))
+                if (ShoppingList.All(item => !Equals(item.Item, _product)))
                 {
-                    _shoppingList.Add(new ShoppingListItem(_shop, _product, _shopItem.Price));
+                    ShoppingList.Add(new ShoppingListItem(_shop, _product, _shopItem.Price));
                 }
 
-                _shoppingList.FirstOrDefault(item => Equals(item.Item, _product)).Count += 1;
+                ShoppingList.FirstOrDefault(item => Equals(item.Item, _product)).Count += 1;
                 return this;
             }
 
             if (Choice == "Remove from card")
             {
-                _shoppingList.First(item => item.Item.Id == _product.Id).Count -= 1;
+                ShoppingList.First(item => item.Item.Id == _product.Id).Count -= 1;
                 return this;
+            }
+
+            if (Choice == "Back")
+            {
+                return PrevMenu;
             }
 
             throw new ShopException("ItemMenu can't handle this choice");
@@ -53,9 +49,9 @@ namespace Shops.UI.Menu
 
         public override void UpdateTable()
         {
-            ShoppingListItem obtainedItem = _shoppingList.FirstOrDefault(item => item.Item.Id == _product.Id);
+            ShoppingListItem obtainedItem = ShoppingList.FirstOrDefault(item => item.Item.Id == _product.Id);
 
-            _table = new Table();
+            Table = new Table();
             SelectionOptions = new List<string>();
             if (obtainedItem == null || obtainedItem.Count < _shopItem.Count)
             {
@@ -69,8 +65,8 @@ namespace Shops.UI.Menu
 
             SelectionOptions.Add("Back");
 
-            _table.AddColumns("N", "Name", "Price", "Count");
-            _table.AddRow(
+            Table.AddColumns("N", "Name", "Price", "Count");
+            Table.AddRow(
                     "1",
                     _product.Name,
                     _shopItem.Price.ToString(),
