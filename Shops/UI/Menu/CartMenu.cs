@@ -13,31 +13,6 @@ namespace Shops.UI.Menu
         {
         }
 
-        public override IMenu GenerateNextMenu()
-        {
-            if (Choice == "Buy")
-            {
-                foreach (ShoppingListItem item in ShoppingList)
-                {
-                    item.BuyThisItem(Context.Customer);
-                }
-
-                return this;
-            }
-
-            if (Choice == "-")
-            {
-                return this;
-            }
-
-            if (Choice == "Back")
-            {
-                return PrevMenu;
-            }
-
-            throw new ShopException("CartMenu can't handle this choice");
-        }
-
         public override void UpdateTable()
         {
             Table = new Table();

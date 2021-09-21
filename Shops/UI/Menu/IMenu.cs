@@ -3,8 +3,6 @@
     public interface IMenu
     {
         void Show();
-        IMenu GenerateNextMenu();
-
         void UpdateTable();
     }
 }

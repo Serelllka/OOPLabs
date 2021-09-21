@@ -19,16 +19,6 @@ namespace Shops.UI.Menu
             _shops = shops;
         }
 
-        public override IMenu GenerateNextMenu()
-        {
-            if (Choice == "Back")
-            {
-                return PrevMenu;
-            }
-
-            return new ProductsMenu(_shops[SelectionOptions.IndexOf(Choice)], ShoppingList, Context, this);
-        }
-
         public override void UpdateTable()
         {
             SelectionOptions = new List<string>();

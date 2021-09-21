@@ -16,31 +16,6 @@ namespace Shops.UI.Menu
         {
         }
 
-        public override IMenu GenerateNextMenu()
-        {
-            if (Choice == "List of shops")
-            {
-                return new ShopsMenu(Context.Shops, ShoppingList, Context, this);
-            }
-
-            if (Choice == "Shopping List")
-            {
-                return new CartMenu(ShoppingList, Context, this);
-            }
-
-            if (Choice == "Back")
-            {
-                return PrevMenu;
-            }
-
-            if (Choice == "-")
-            {
-                return this;
-            }
-
-            throw new ShopException("MainMenu can't handle this choice");
-        }
-
         public override void UpdateTable()
         {
             SelectionOptions = new List<string>();

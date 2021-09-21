@@ -38,8 +38,6 @@ namespace Shops.UI.Menu
                     .AddChoices(SelectionOptions));
         }
 
-        public abstract IMenu GenerateNextMenu();
-
         public abstract void UpdateTable();
     }
 }
