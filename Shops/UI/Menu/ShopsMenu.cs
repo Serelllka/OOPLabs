@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Shops.Entities;
+using Shops.UI.Models;
 using Spectre.Console;
 
 namespace Shops.UI.Menu
@@ -8,8 +9,12 @@ namespace Shops.UI.Menu
     {
         private IReadOnlyList<Shop> _shops;
 
-        public ShopsMenu(IReadOnlyList<Shop> shops, List<ShoppingListItem> shoppingList, IMenu prevMenu)
-            : base(prevMenu, shoppingList)
+        public ShopsMenu(
+            IReadOnlyList<Shop> shops,
+            List<ShoppingListItem> shoppingList,
+            ClientContext context,
+            Menu prevMenu)
+            : base(prevMenu, shoppingList, context)
         {
             _shops = shops;
         }
@@ -21,7 +26,7 @@ namespace Shops.UI.Menu
                 return PrevMenu;
             }
 
-            return new ProductsMenu(_shops[SelectionOptions.IndexOf(Choice)], ShoppingList, this);
+            return new ProductsMenu(_shops[SelectionOptions.IndexOf(Choice)], ShoppingList, Context, this);
         }
 
         public override void UpdateTable()

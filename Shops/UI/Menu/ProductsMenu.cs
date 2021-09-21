@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Shops.Entities;
+using Shops.UI.Models;
 using Spectre.Console;
 
 namespace Shops.UI.Menu
@@ -9,8 +11,8 @@ namespace Shops.UI.Menu
         private Shop _shop;
         private IReadOnlyList<Product> _products;
 
-        public ProductsMenu(Shop shop, List<ShoppingListItem> shoppingList, IMenu prevMenu)
-            : base(prevMenu, shoppingList)
+        public ProductsMenu(Shop shop, List<ShoppingListItem> shoppingList, ClientContext context, Menu prevMenu)
+            : base(prevMenu, shoppingList, context)
         {
             _shop = shop;
         }
@@ -23,11 +25,11 @@ namespace Shops.UI.Menu
             }
 
             Product selectedProduct = _products[SelectionOptions.IndexOf(Choice)];
+            Context.CurrentShop = _shop;
+            Context.CurrentProduct = selectedProduct;
             return new ItemMenu(
-                _shop,
-                selectedProduct,
-                _shop.GetProductInfo(selectedProduct),
                 ShoppingList,
+                Context,
                 this);
         }
 

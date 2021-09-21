@@ -2,40 +2,45 @@
 using System.Linq;
 using Shops.Entities;
 using Shops.Tools;
+using Shops.UI.Models;
 using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
     public class ItemMenu : Menu
     {
-        private Shop _shop;
-        private Product _product;
-        private ShopItem _shopItem;
-
-        public ItemMenu(Shop shop, Product product, ShopItem shopItem, List<ShoppingListItem> shoppingList, IMenu prevMenu)
-            : base(prevMenu, shoppingList)
+        public ItemMenu(
+            List<ShoppingListItem> shoppingList,
+            ClientContext context,
+            Menu prevMenu)
+            : base(prevMenu, shoppingList, context)
         {
-            _shop = shop;
-            _product = product;
-            _shopItem = shopItem;
         }
 
         public override IMenu GenerateNextMenu()
         {
+            if (Context.CurrentProduct is null)
+            {
+                throw new ShopException("CurrentProduct can't be null");
+            }
+
             if (Choice == "Add to card")
             {
-                if (ShoppingList.All(item => !Equals(item.Item, _product)))
+                if (ShoppingList.All(item => !Equals(item.Item, Context.CurrentProduct)))
                 {
-                    ShoppingList.Add(new ShoppingListItem(_shop, _product, _shopItem.Price));
+                    ShoppingList.Add(new ShoppingListItem(
+                        Context.CurrentShop,
+                        Context.CurrentProduct,
+                        Context.CurrentShopItem.Price));
                 }
 
-                ShoppingList.FirstOrDefault(item => Equals(item.Item, _product)).Count += 1;
+                ShoppingList.First(item => Equals(item.Item, Context.CurrentProduct)).Count += 1;
                 return this;
             }
 
             if (Choice == "Remove from card")
             {
-                ShoppingList.First(item => item.Item.Id == _product.Id).Count -= 1;
+                ShoppingList.First(item => item.Item.Id == Context.CurrentProduct.Id).Count -= 1;
                 return this;
             }
 
@@ -49,11 +54,16 @@ namespace Shops.UI.Menu
 
         public override void UpdateTable()
         {
-            ShoppingListItem obtainedItem = ShoppingList.FirstOrDefault(item => item.Item.Id == _product.Id);
+            if (Context.CurrentProduct is null)
+            {
+                throw new ShopException("CurrentProduct can't be null");
+            }
+
+            ShoppingListItem obtainedItem = ShoppingList.FirstOrDefault(item => item.Item.Id == Context.CurrentProduct.Id);
 
             Table = new Table();
             SelectionOptions = new List<string>();
-            if (obtainedItem == null || obtainedItem.Count < _shopItem.Count)
+            if (obtainedItem == null || obtainedItem.Count < Context.CurrentShopItem.Count)
             {
                 SelectionOptions.Add("Add to card");
             }
@@ -66,11 +76,12 @@ namespace Shops.UI.Menu
             SelectionOptions.Add("Back");
 
             Table.AddColumns("N", "Name", "Price", "Count");
+
             Table.AddRow(
                     "1",
-                    _product.Name,
-                    _shopItem.Price.ToString(),
-                    (_shopItem.Count - (obtainedItem?.Count ?? 0)).ToString());
+                    Context.CurrentProduct.Name,
+                    Context.CurrentShopItem.Price.ToString(),
+                    (Context.CurrentShopItem.Count - (obtainedItem?.Count ?? 0)).ToString());
         }
     }
 }

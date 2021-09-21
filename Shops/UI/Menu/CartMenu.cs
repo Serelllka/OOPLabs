@@ -1,18 +1,16 @@
 ﻿using System.Collections.Generic;
 using Shops.Entities;
-using Shops.Models;
 using Shops.Tools;
+using Shops.UI.Models;
 using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
     public class CartMenu : Menu
     {
-        private Person _person;
-        public CartMenu(Person person, List<ShoppingListItem> shoppingList, IMenu prevMenu)
-            : base(prevMenu, shoppingList)
+        public CartMenu(List<ShoppingListItem> shoppingList, ClientContext context, Menu prevMenu)
+            : base(prevMenu, shoppingList, context)
         {
-            _person = person;
         }
 
         public override IMenu GenerateNextMenu()
@@ -21,7 +19,7 @@ namespace Shops.UI.Menu
             {
                 foreach (ShoppingListItem item in ShoppingList)
                 {
-                    item.BuyThisItem(_person);
+                    item.BuyThisItem(Context.Customer);
                 }
 
                 return this;
@@ -60,8 +58,8 @@ namespace Shops.UI.Menu
             }
 
             Table.AddRow("-", "-", "-", "-", "-");
-            Table.AddRow("Person:", _person.Name, "Balance:", _person.Balance.ToString());
-            if (_person.Balance < totalPrice)
+            Table.AddRow("Person:", Context.Customer.Name, "Balance:", Context.Customer.Balance.ToString());
+            if (Context.Customer.Balance < totalPrice)
             {
                 Table.AddRow("Not enough money ", "Total price:", totalPrice.ToString(), "-", "-");
                 SelectionOptions.Add("-"); // this field is added because one field is not displayed correctly

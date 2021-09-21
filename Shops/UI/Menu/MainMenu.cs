@@ -2,31 +2,30 @@
 using Shops.Entities;
 using Shops.Services;
 using Shops.Tools;
+using Shops.UI.Models;
 
 namespace Shops.UI.Menu
 {
     public class MainMenu : Menu
     {
-        private ShopManager _shopManager;
-        private Person _person;
-
-        public MainMenu(ShopManager shopManager, Person person, List<ShoppingListItem> shoppingList, IMenu prevMenu = null)
-            : base(prevMenu, shoppingList)
+        public MainMenu(
+            List<ShoppingListItem> shoppingList,
+            ClientContext context,
+            Menu prevMenu = null)
+            : base(prevMenu, shoppingList, context)
         {
-            _person = person;
-            _shopManager = shopManager;
         }
 
         public override IMenu GenerateNextMenu()
         {
             if (Choice == "List of shops")
             {
-                return new ShopsMenu(_shopManager.Shops, ShoppingList, this);
+                return new ShopsMenu(Context.Shops, ShoppingList, Context, this);
             }
 
             if (Choice == "Shopping List")
             {
-                return new CartMenu(_person, ShoppingList, this);
+                return new CartMenu(ShoppingList, Context, this);
             }
 
             if (Choice == "Back")
@@ -46,7 +45,7 @@ namespace Shops.UI.Menu
         {
             SelectionOptions = new List<string>();
 
-            if (_shopManager.Shops.Count > 0)
+            if (Context.Shops.Count > 0)
             {
                 SelectionOptions.Add("List of shops");
             }

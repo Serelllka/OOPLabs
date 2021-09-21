@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Shops.Entities;
 using Shops.Services;
 using Shops.Tools;
 using Shops.UI.Menu;
+using Shops.UI.Models;
 using Spectre.Console;
 
 namespace Shops.UI
@@ -11,6 +13,7 @@ namespace Shops.UI
     {
         private ShopManager _shopManager;
         private Person _person;
+        private MenuFactory _factory;
 
         public MenuManager(ShopManager shopManager, Person person)
         {
@@ -20,15 +23,20 @@ namespace Shops.UI
 
         public void Start()
         {
-            NextMenu(new MainMenu(_shopManager, _person, new List<ShoppingListItem>()));
+            _factory = new MenuFactory(new MainMenu(
+                new List<ShoppingListItem>(),
+                new ClientContext(_shopManager, _person)));
+            NextMenu(_factory.CurrentMenu);
         }
 
-        public void NextMenu(IMenu currentMenu)
+        public void NextMenu(Menu.Menu currentMenu)
         {
             currentMenu.Show();
-            currentMenu = currentMenu.GenerateNextMenu();
+
+            // currentMenu = currentMenu.GenerateNextMenu();
+            // NextMenu(currentMenu);
             AnsiConsole.Clear();
-            NextMenu(currentMenu);
+            NextMenu(_factory.CreateMenu(currentMenu.Choice));
         }
     }
 }

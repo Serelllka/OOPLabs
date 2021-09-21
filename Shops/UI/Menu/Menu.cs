@@ -1,25 +1,28 @@
 ﻿using System.Collections.Generic;
 using Shops.Entities;
+using Shops.UI.Models;
 using Spectre.Console;
 
 namespace Shops.UI.Menu
 {
     public abstract class Menu : IMenu
     {
-        protected Menu(IMenu prevMenu, List<ShoppingListItem> shoppingList)
+        private ClientContext _context;
+        protected Menu(Menu prevMenu, List<ShoppingListItem> shoppingList, ClientContext context)
         {
             PrevMenu = prevMenu;
             SelectionOptions = new List<string>();
             ShoppingList = shoppingList;
+            _context = context;
             Table = new Table();
         }
 
-        protected string Choice { get; private set; }
-        protected IMenu PrevMenu { get; }
-
-        protected List<string> SelectionOptions { get; set; }
+        public ClientContext Context => _context;
+        public Menu PrevMenu { get; }
+        public string Choice { get; private set; }
+        public List<string> SelectionOptions { get; set; }
+        public List<ShoppingListItem> ShoppingList { get; private set; }
         protected Table Table { get; set; }
-        protected List<ShoppingListItem> ShoppingList { get; private set; }
 
         public void Show()
         {
