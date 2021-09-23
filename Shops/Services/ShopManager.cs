@@ -20,28 +20,34 @@ namespace Shops.Services
         public IReadOnlyList<Shop> Shops => _shops;
         public IReadOnlyList<Product> Products => _products;
 
-        public Shop CreateShop(string name)
+        public void RegisterShop(Shop newShop)
         {
-            if (name == null)
+            if (newShop == null)
             {
-                throw new ShopException("Can't create shop with null name");
+                throw new ShopException("Shop is null");
             }
 
-            var shop = new Shop(name);
-            _shops.Add(shop);
-            return shop;
+            if (_shops.Contains(newShop))
+            {
+                throw new ShopException("This shop is already added");
+            }
+
+            _shops.Add(newShop);
         }
 
-        public Product RegisterProduct(string name)
+        public void RegisterProduct(Product newProduct)
         {
-            if (name == null)
+            if (newProduct == null)
             {
-                throw new ShopException("Can't create shop with null name");
+                throw new ShopException("Product is null");
             }
 
-            var product = new Product(name);
-            _products.Add(product);
-            return product;
+            if (_products.Contains(newProduct))
+            {
+                throw new ShopException("This product is already added");
+            }
+
+            _products.Add(newProduct);
         }
 
         public Shop FindOptimalShopByPrice(IReadOnlyDictionary<Product, Count> shoppingList)

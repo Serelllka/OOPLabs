@@ -21,12 +21,7 @@ namespace Shops.Entities
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Product prod))
-            {
-                return false;
-            }
-
-            return Id == prod.Id;
+            return obj is Product prod && Id == prod.Id;
         }
     }
 }

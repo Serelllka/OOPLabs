@@ -4,7 +4,6 @@ using NUnit.Framework;
 using Shops.Entities;
 using Shops.Services;
 using Shops.Tools;
-using Shops.UI;
 using Shops.ValueObject;
 
 namespace Shops.Tests
@@ -28,8 +27,10 @@ namespace Shops.Tests
             const int productToBuyCount = 3;
 
             var person = new Person("Billy Herrington", moneyBefore);
-            Shop shop = _shopManager.CreateShop("VisitingDungeonMaster");
-            Product product = _shopManager.RegisterProduct("Fisting");
+            var shop = new Shop("VisitingDungeonMaster");
+            _shopManager.RegisterShop(shop);
+            var product = new Product("Fisting");
+            _shopManager.RegisterProduct(product);
 
             var shoppingList = new Dictionary<Product, Count>();
             shoppingList.Add(product, new Count(productToBuyCount));
@@ -47,8 +48,10 @@ namespace Shops.Tests
             const int priceBefore = 300;
             const int priceAfter = 228;
 
-            Shop shop = _shopManager.CreateShop("Dungeon");
-            Product product = _shopManager.RegisterProduct("Cocaine");
+            var shop = new Shop("Dungeon");
+            _shopManager.RegisterShop(shop);
+            var product = new Product("Cocaine");
+            _shopManager.RegisterProduct(product);
             
             shop.RegisterProduct(product, priceBefore, 5);
             shop.ChangePrice(product, priceAfter);
@@ -58,13 +61,20 @@ namespace Shops.Tests
 
         [Test] public void FindTheLowestPrice_ReturnShopWithMinimumTotalPrice()
         {
-            Shop shop1 = _shopManager.CreateShop("Shop1");
-            Shop shop2 = _shopManager.CreateShop("Shop2");
-            Shop shop3 = _shopManager.CreateShop("Shop3");
-            Shop shop4 = _shopManager.CreateShop("Shop4");
+            var shop1 = new Shop("Shop1");
+            var shop2 = new Shop("Shop2");
+            var shop3 = new Shop("Shop3");
+            var shop4 = new Shop("Shop4");
+            
+            _shopManager.RegisterShop(shop1);
+            _shopManager.RegisterShop(shop2);
+            _shopManager.RegisterShop(shop3);
+            _shopManager.RegisterShop(shop4);
 
-            Product cheese = _shopManager.RegisterProduct("Russian's Cheese");
-            Product lard = _shopManager.RegisterProduct("Ukrainian's Lard");
+            var cheese = new Product("Russian's Cheese");
+            var lard = new Product("Ukrainian's Lard");
+            _shopManager.RegisterProduct(cheese);
+            _shopManager.RegisterProduct(lard);
             
             var shoppingList = new Dictionary<Product, Count>();
             shoppingList.Add(cheese, new Count(2));
@@ -98,10 +108,13 @@ namespace Shops.Tests
             const int lardToBuyCount = 4;
 
             var person = new Person("Billy Herrington", moneyBefore);
-            Shop shop = _shopManager.CreateShop("VisitingDungeonMaster");
+            var shop = new Shop("VisitingDungeonMaster");
+            _shopManager.RegisterShop(shop);
             
-            Product cheese = _shopManager.RegisterProduct("Russian's Cheese");
-            Product lard = _shopManager.RegisterProduct("Ukrainian's Lard");
+            var cheese = new Product("Russian's Cheese");
+            var lard = new Product("Ukrainian's Lard");
+            _shopManager.RegisterProduct(cheese);
+            _shopManager.RegisterProduct(lard);
             
             var shoppingList = new Dictionary<Product, Count>();
             shoppingList.Add(cheese, new Count(cheeseToBuyCount));
@@ -127,21 +140,22 @@ namespace Shops.Tests
 
             Assert.Catch<ShopException>(() =>
             {
-                Shop shop = _shopManager.CreateShop(null);
+                var shop = new Shop(null);
             });
 
             Assert.Catch<ShopException>(() =>
             {
-                Product product = _shopManager.RegisterProduct(null);
+                var product = new Product(null);
             });
         }
         [Test]
         public void TryToBuyShoppingList_ThrowsExceptionMoneyAndProductAmountIsNotChanged()
         {
-            Shop shop = _shopManager.CreateShop("Shop1");
+            var shop = new Shop("Shop");
+            _shopManager.RegisterShop(shop);
 
-            Product cheese = _shopManager.RegisterProduct("Russian's Cheese");
-            Product lard = _shopManager.RegisterProduct("Ukrainian's Lard");
+            var cheese = new Product("Russian's Cheese");
+            var lard = new Product("Ukrainian's Lard");
             
             var shoppingList = new Dictionary<Product, Count>();
             shoppingList.Add(cheese, new Count(1));

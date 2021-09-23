@@ -17,11 +17,14 @@ namespace Shops
             const int priceBefore = 300;
             const int priceAfter = 228;
 
-            Shop shop = shopManager.CreateShop("Dungeon");
-            shopManager.CreateShop("NeDungeon");
-            Product cocaine = shopManager.RegisterProduct("Cocaine");
-            Product cheese = shopManager.RegisterProduct("Russian's Cheese");
-            Product lard = shopManager.RegisterProduct("Lard");
+            var shop = new Shop("Dungeon");
+            shopManager.RegisterShop(shop);
+            var cocaine = new Product("Cocaine");
+            var cheese = new Product("Russian's Cheese");
+            var lard = new Product("Lard");
+            shopManager.RegisterProduct(cocaine);
+            shopManager.RegisterProduct(cheese);
+            shopManager.RegisterProduct(lard);
 
             shop.RegisterProduct(cocaine, priceBefore, 5);
             shop.RegisterProduct(cheese, priceBefore, 4);

@@ -12,6 +12,11 @@ namespace Shops.Entities
 
         public Shop(string name)
         {
+            if (name is null)
+            {
+                throw new ShopException("Can't create shop with null name");
+            }
+
             _products = new Dictionary<Product, ShopItem>();
             Id = Guid.NewGuid();
             Name = name;
