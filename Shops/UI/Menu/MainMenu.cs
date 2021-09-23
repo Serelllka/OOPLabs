@@ -35,6 +35,8 @@ namespace Shops.UI.Menu
                 SelectionOptions.Add("Back");
             }
 
+            SelectionOptions.Add("Exit");
+
             if (SelectionOptions.Count == 1)
             {
                 SelectionOptions.Add("-");  // this field is added because one field is not displayed correctly

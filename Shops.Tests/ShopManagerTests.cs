@@ -5,6 +5,7 @@ using Shops.Entities;
 using Shops.Services;
 using Shops.Tools;
 using Shops.UI;
+using Shops.ValueObject;
 
 namespace Shops.Tests
 {
@@ -134,5 +135,31 @@ namespace Shops.Tests
                 Product product = _shopManager.RegisterProduct(null);
             });
         }
+        [Test]
+        public void TryToBuyShoppingList_ThrowsExceptionMoneyAndProductAmountIsNotChanged()
+        {
+            Shop shop = _shopManager.CreateShop("Shop1");
+
+            Product cheese = _shopManager.RegisterProduct("Russian's Cheese");
+            Product lard = _shopManager.RegisterProduct("Ukrainian's Lard");
+            
+            var shoppingList = new Dictionary<Product, Count>();
+            shoppingList.Add(cheese, new Count(1));
+            shoppingList.Add(lard, new Count(1));
+            
+            shop.RegisterProduct(cheese, 10, 2);
+            shop.RegisterProduct(lard, 1000, 3);
+
+            var person = new Person("Freddi", 10);
+            
+            Assert.Catch<ShopException>(() =>
+            {
+               shop.Buy(person, shoppingList);
+            });
+            
+            Assert.AreEqual(person.Balance, 10);
+            Assert.AreEqual(shop.GetProductInfo(cheese).Count, 2);
+        }
+        
     }
 }

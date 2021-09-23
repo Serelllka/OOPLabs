@@ -2,7 +2,7 @@
 {
     public class ShoppingListItem
     {
-        private Shop _shop;
+        private readonly Shop _shop;
         public ShoppingListItem(Shop shop, Product product, uint price, uint count = 0)
         {
             _shop = shop;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Shops.Tools;
+using Shops.ValueObject;
 
 namespace Shops.Entities
 {
@@ -23,68 +24,64 @@ namespace Shops.Entities
         {
             if (product == null)
             {
-                throw new ShopException("your product should be is not null");
+                throw new ShopException("This product doesn't exist");
             }
 
-            _products.Add(product, new ShopItem(price, count));
+            _products.Add(product, new ShopItem(price, count, product));
         }
 
         public void AddProducts(Product product, uint count)
         {
-            if (!_products.ContainsKey(product))
-            {
-                throw new ShopException("This shop doesn't contain this product");
-            }
-
-            _products[product].Count += count;
+            GetProductInfo(product).Count += count;
         }
 
         public void ReserveProducts(Product product, uint count)
         {
-            if (!_products.ContainsKey(product))
-            {
-                throw new ShopException("This shop doesn't contain this product");
-            }
+            ShopItem obtainedProduct = GetProductInfo(product);
 
-            if (_products[product].Count < count)
+            if (obtainedProduct.Count < count)
             {
                 throw new ShopException("This shop doesn't contain required quantity of this product");
             }
 
-            _products[product].Count -= count;
+            obtainedProduct.Count -= count;
         }
 
         public void ChangePrice(Product product, uint newPrice)
         {
-            if (!_products.ContainsKey(product))
+            ShopItem obtainedProduct = GetProductInfo(product);
+
+            obtainedProduct.Price = newPrice;
+        }
+
+        public uint CalculateTotalPrice(IReadOnlyDictionary<Product, Count> shoppingList)
+        {
+            uint totalPrice = 0;
+            foreach ((Product product, Count count) in shoppingList)
             {
-                throw new ShopException("This shop doesn't contain this product");
+                totalPrice += GetProductInfo(product).Price * count.Value;
             }
 
-            _products[product].Price = newPrice;
+            return totalPrice;
         }
 
         public void Buy(Person person, IReadOnlyDictionary<Product, Count> shoppingList)
         {
+            if (CalculateTotalPrice(shoppingList) > person.Balance)
+            {
+                throw new ShopException("This person doesn't have required amount of money");
+            }
+
+            if (!ContainsProducts(shoppingList))
+            {
+                throw new ShopException("This shop doesn't contain required quantity of this product");
+            }
+
             foreach ((Product product, Count count) in shoppingList)
             {
-                if (!_products.ContainsKey(product))
-                {
-                    throw new ShopException("This shop doesn't contain this product");
-                }
-
-                if (_products[product].Count < count.Value)
-                {
-                    throw new ShopException("This shop doesn't contain required quantity of this product");
-                }
-
-                if (_products[product].Price * count.Value > person.Balance)
-                {
-                    throw new ShopException("This person doesn't have required amount of money");
-                }
-
-                _products[product].Count -= count.Value;
-                person.Balance -= _products[product].Price * count.Value;
+                ShopItem obtainedProduct = GetProductInfo(product);
+                obtainedProduct.Count -= count.Value;
+                person.ReduceMoney(obtainedProduct.Price * count.Value);
             }
         }
 
@@ -97,12 +94,12 @@ namespace Shops.Entities
 
         public ShopItem GetProductInfo(Product product)
         {
-            if (!_products.ContainsKey(product))
+            if (!_products.TryGetValue(product, out ShopItem shopItem))
             {
                 throw new ShopException("This shop doesn't contain this product");
             }
 
-            return _products[product];
+            return shopItem;
         }
 
         public bool ContainsProduct(Product product)
@@ -137,9 +134,10 @@ namespace Shops.Entities
                 throw new ShopException("This shop doesnt contains required amount of products");
             }
 
-            return shoppingList.Aggregate<KeyValuePair<Product, Count>, uint>(
+            int totalPrice = shoppingList.Aggregate(
                 0,
-                (current, item) => current + (GetProductInfo(item.Key).Price * item.Value.Value));
+                (current, item) => (int)(current + (GetProductInfo(item.Key).Price * item.Value.Value)));
+            return (uint)totalPrice;
         }
     }
 }

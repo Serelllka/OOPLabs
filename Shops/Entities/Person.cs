@@ -11,6 +11,16 @@ namespace Shops.Entities
         }
 
         public string Name { get; }
-        public uint Balance { get; set; }
+        public uint Balance { get; private set; }
+
+        public void ReduceMoney(uint delta)
+        {
+            if (delta > Balance)
+            {
+                throw new ShopException("not enough money");
+            }
+
+            Balance -= delta;
+        }
     }
 }

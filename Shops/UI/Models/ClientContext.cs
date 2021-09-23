@@ -23,9 +23,14 @@ namespace Shops.UI.Models
         {
             get
             {
-                if (CurrentShop is null || CurrentProduct is null)
+                if (CurrentShop is null)
                 {
                     throw new ShopException("CurrentShop can't be null");
+                }
+
+                if (CurrentProduct is null)
+                {
+                    throw new ShopException("CurrentProduct can't be null");
                 }
 
                 return CurrentShop.GetProductInfo(CurrentProduct);

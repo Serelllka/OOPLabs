@@ -2,6 +2,7 @@
 using System.Linq;
 using Shops.Entities;
 using Shops.Tools;
+using Shops.ValueObject;
 
 namespace Shops.Services
 {

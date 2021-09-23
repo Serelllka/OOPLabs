@@ -1,103 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Shops.Entities;
+using Shops.Tools;
+using Shops.UI.Commands;
 using Shops.UI.Menu;
 
-namespace Shops.Tools
+namespace Shops.UI.Factory
 {
     public class MenuFactory
     {
-        private Menu _currentMenu;
-        public MenuFactory(Menu currentMenu)
+        private Command _command;
+        private Menu.Menu _currentMenu;
+        public MenuFactory(Menu.Menu currentMenu)
         {
             _currentMenu = currentMenu;
         }
 
-        public Menu CurrentMenu => _currentMenu;
-
-        public Menu CreateMenu(string selectedOption)
+        public Menu.Menu CurrentMenu => _currentMenu;
+        public Menu.Menu CreateOrFindMenu(string selectedOption)
         {
             switch (selectedOption)
             {
+                case "Exit":
+                    _command = new CommandExit(_currentMenu);
+                    break;
                 case "-":
-                    return _currentMenu;
-
+                    _command = new CommandNull(_currentMenu);
+                    break;
                 case "Back":
-                    _currentMenu = _currentMenu.PrevMenu;
-                    return _currentMenu;
-
+                    _command = new CommandBack(_currentMenu);
+                    break;
                 case "Buy":
-                    foreach (ShoppingListItem item in _currentMenu.ShoppingList)
-                    {
-                        item.BuyThisItem(_currentMenu.Context.Customer);
-                    }
-
-                    return _currentMenu;
-
+                    _command = new CommandBuy(_currentMenu);
+                    break;
                 case "Add to card":
-                    if (_currentMenu.ShoppingList.All(item =>
-                        !Equals(item.Item, _currentMenu.Context.CurrentProduct)))
-                    {
-                        _currentMenu.ShoppingList.Add(new ShoppingListItem(
-                            _currentMenu.Context.CurrentShop,
-                            _currentMenu.Context.CurrentProduct,
-                            _currentMenu.Context.CurrentShopItem.Price));
-                    }
-
-                    _currentMenu.ShoppingList.First(item =>
-                        Equals(item.Item, _currentMenu.Context.CurrentProduct)).Count += 1;
-                    return _currentMenu;
-
+                    _command = new CommandAddToCart(_currentMenu);
+                    break;
                 case "Remove from card":
-                    if (_currentMenu.Context.CurrentProduct is null)
-                    {
-                        throw new ShopException("CurrentProduct can't be null");
-                    }
-
-                    _currentMenu.ShoppingList.First(item =>
-                        item.Item.Id == _currentMenu.Context.CurrentProduct.Id).Count -= 1;
-                    return _currentMenu;
-
+                    _command = new CommandRemove(_currentMenu);
+                    break;
                 case "List of shops":
-                    _currentMenu = new ShopsMenu(
-                        _currentMenu.Context.Shops,
-                        _currentMenu.ShoppingList,
-                        _currentMenu.Context,
-                        _currentMenu);
-                    return _currentMenu;
-
+                    _command = new CommandShowShops(_currentMenu);
+                    break;
                 case "Shopping List":
-                    _currentMenu = new CartMenu(
-                        _currentMenu.ShoppingList,
-                        _currentMenu.Context,
-                        _currentMenu);
-                    return _currentMenu;
+                    _command = new CommandShowShoppingList(_currentMenu);
+                    break;
             }
 
-            if (_currentMenu is ProductsMenu)
+            _command = _currentMenu switch
             {
-                _currentMenu.Context.CurrentProduct = _currentMenu.Context.GetCurrentProducts()[_currentMenu.SelectionOptions.IndexOf(selectedOption)];
-                _currentMenu = new ItemMenu(
-                    _currentMenu.ShoppingList,
-                    _currentMenu.Context,
-                    _currentMenu);
-                return _currentMenu;
-            }
+                ProductsMenu when _command is null => new CommandItemMenu(_currentMenu),
+                ShopsMenu when _command is null => new CommandProductsMenu(_currentMenu),
+                _ => _command
+            };
 
-            if (_currentMenu is ShopsMenu)
-            {
-                _currentMenu.Context.CurrentShop =
-                    _currentMenu.Context.Shops[_currentMenu.SelectionOptions.IndexOf(selectedOption)];
-                _currentMenu = new ProductsMenu(
-                    _currentMenu.Context.CurrentShop,
-                    _currentMenu.ShoppingList,
-                    _currentMenu.Context,
-                    _currentMenu);
-                return _currentMenu;
-            }
+            if (_command == null) throw new ShopException("Can't handle this choice");
 
-            throw new ShopException("Can't handle this choice");
+            _currentMenu = _command.Execute();
+            _command = null;
+            return _currentMenu;
         }
     }
 }

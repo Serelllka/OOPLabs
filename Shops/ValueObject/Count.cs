@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Shops.Entities
+﻿namespace Shops.ValueObject
 {
     public class Count
     {
@@ -9,6 +7,6 @@ namespace Shops.Entities
             Value = value;
         }
 
-        public uint Value { get; private set; }
+        public uint Value { get; }
     }
 }
