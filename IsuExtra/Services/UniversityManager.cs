@@ -15,11 +15,13 @@ namespace IsuExtra.Services
     {
         private List<Faculty> _faculties;
         private IsuService _isuService;
+        private Dictionary<Faculty, GsaCourse> _courses;
 
         public UniversityManager()
         {
             _isuService = new IsuService();
             _faculties = new List<Faculty>();
+            _courses = new Dictionary<Faculty, GsaCourse>();
         }
 
         public void RegisterFaculty(Faculty faculty)
@@ -40,6 +42,36 @@ namespace IsuExtra.Services
         public IReadOnlyList<Student> GetListOfStudentsWithoutGsa(Group @group)
         {
             return _isuService.FindStudents(group.GroupName).Where(item => !StudentHasGsa(item)).ToList();
+        }
+
+        public void RegisterGsaCourse(GsaCourse course, Faculty faculty)
+        {
+            if (faculty is null)
+            {
+                throw new IsuExtraException("faculty can't be null");
+            }
+
+            if (course is null)
+            {
+                throw new IsuExtraException("course can't be null");
+            }
+
+            if (!_faculties.Contains(faculty))
+            {
+                throw new IsuExtraException("This faculty not registered in system");
+            }
+
+            if (_courses.ContainsValue(course))
+            {
+                throw new IsuExtraException("This courses is already registered in system");
+            }
+
+            if (_courses.ContainsKey(faculty))
+            {
+                throw new IsuExtraException("This courses is already registered in system");
+            }
+
+            _courses.Add(faculty, course);
         }
 
         public Group CreateGroup(Faculty faculty, Schedule schedule, string groupName)
@@ -96,7 +128,7 @@ namespace IsuExtra.Services
                 throw new IsuExtraException("This GSA not from this university");
             }
 
-            if (Equals(gsaFlow.Course.GsaFaculty, FindFacultyByGroup(student.StudentGroup)))
+            if (Equals(FindFacultyByGsa(gsaFlow.Course), FindFacultyByGroup(student.StudentGroup)))
             {
                 throw new IsuExtraException("Can't register student to GSA from his faculty");
             }
@@ -126,12 +158,17 @@ namespace IsuExtra.Services
 
         public bool StudentHasGsa(Student student)
         {
-            return _faculties.Exists(item => item.GsaCourse.ContainsStudent(student));
+            return _faculties.Exists(item => _courses[item].ContainsStudent(student));
         }
 
         private bool ContainsGsa(GsaCourse gsaCourse)
         {
-            return _faculties.Exists(item => Equals(item.GsaCourse, gsaCourse));
+            return _courses.ContainsValue(gsaCourse);
+        }
+
+        private Faculty FindFacultyByGsa(GsaCourse course)
+        {
+            return _courses.FirstOrDefault(item => Equals(item.Value, course)).Key;
         }
 
         private Faculty FindFacultyByGroup(Group @group)
@@ -142,16 +179,10 @@ namespace IsuExtra.Services
 
         private GroupInfo GetGroupInfo(Group @group)
         {
-            foreach (Faculty item in _faculties)
-            {
-                GroupInfo obtainedObject = item.FindGroupInfo(group);
-                if (obtainedObject is not null)
-                {
-                    return obtainedObject;
-                }
-            }
-
-            throw new IsuExtraException("can't get GroupInfo");
+            return _faculties.
+                Select(item => item.FindGroupInfo(group)).
+                FirstOrDefault(item => item is not null)
+                   ?? throw new IsuExtraException("can't get GroupInfo");
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using IsuExtra.Models;
+﻿using System;
+using IsuExtra.Models;
 
 namespace IsuExtra.Entities
 {
     public class Lesson
     {
-        public Lesson(uint startingDay, uint startingHour, uint startingMinute, uint duration = 90)
+        public Lesson(int startingDay, int startingHour, int startingMinute, int duration = 90)
         {
             StartingTime = new Time(startingDay, startingHour, startingMinute);
             EndingTime = new Time(

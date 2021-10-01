@@ -28,16 +28,10 @@ namespace IsuExtra.Tests
             {
                 _universityManager.RegisterFaculty(null);
             });
-            
+
             Assert.Catch<IsuExtraException>(() =>
             {
-                var faculty = new Faculty("123");
-                var GSA = new GsaCourse(faculty, null);
-            });
-            
-            Assert.Catch<IsuExtraException>(() =>
-            {
-                var GSA = new GsaCourse(null, "123");
+                var GSA = new GsaCourse(null);
             });
             
             Assert.Catch<IsuExtraException>(() =>
@@ -106,11 +100,12 @@ namespace IsuExtra.Tests
         {
             var faculty = new Faculty("Dungeon");
             var gsaSchedule = new Schedule();
-            var gsa = new GsaCourse(faculty, "UltimateGSA");
+            var gsa = new GsaCourse("UltimateGSA");
+            _universityManager.RegisterFaculty(faculty);
+            _universityManager.RegisterGsaCourse(gsa, faculty);
             
             var schedule = new Schedule();
-
-            _universityManager.RegisterFaculty(faculty);
+            
             Group @group = _universityManager.CreateGroup(faculty, schedule, "M3100");
             Student student = _universityManager.CreateStudent(group, "Ilusha");
             
@@ -130,14 +125,15 @@ namespace IsuExtra.Tests
             var lesson = new Lesson(1, 8, 0);
             gsaSchedule.AddLesson(lesson);
             
-            var gsa = new GsaCourse(faculty2, "UltimateGSA");
+            var gsa = new GsaCourse("UltimateGSA");
+            _universityManager.RegisterFaculty(faculty2);
+            _universityManager.RegisterGsaCourse(gsa, faculty2);
             
             var schedule = new Schedule();
             lesson = new Lesson(1, 9, 0);
             schedule.AddLesson(lesson);
 
             _universityManager.RegisterFaculty(faculty1);
-            _universityManager.RegisterFaculty(faculty2);
 
             Group @group = _universityManager.CreateGroup(faculty1, schedule, "M3100");
             
@@ -154,13 +150,13 @@ namespace IsuExtra.Tests
         {
             var faculty = new Faculty("Dungeon");
             
-            var gsa = new GsaCourse(faculty, "UltimateGSA");
+            var gsa = new GsaCourse("UltimateGSA");
+            _universityManager.RegisterFaculty(faculty);
+            _universityManager.RegisterGsaCourse(gsa, faculty);
             
             var schedule = new Schedule();
             var lesson = new Lesson(1, 8, 0);
             schedule.AddLesson(lesson);
-
-            _universityManager.RegisterFaculty(faculty);
 
             Group @group = _universityManager.CreateGroup(faculty, schedule, "M3100");
             
@@ -181,9 +177,10 @@ namespace IsuExtra.Tests
             Student student = _universityManager.CreateStudent(group, "Ilusha");
 
             var gsaFaculty = new Faculty("Other");
-            var gsa = new GsaCourse(gsaFaculty, "UltimateGSA");
+            var gsa = new GsaCourse("UltimateGSA");
             _universityManager.RegisterFaculty(gsaFaculty);
-            
+            _universityManager.RegisterGsaCourse(gsa, gsaFaculty);
+
             _universityManager.RegisterStudentOnGsa(gsa.CreateNewFlow(new Schedule()), student);
             _universityManager.CancelRegistrationOnGsa(gsa, student);
             Assert.Catch<IsuExtraException>(() =>

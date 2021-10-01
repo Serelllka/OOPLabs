@@ -10,24 +10,20 @@ namespace IsuExtra.Entities
     {
         private List<GsaFlow> _gsaFlows;
 
-        public GsaCourse(Faculty gsaFaculty, string name)
+        public GsaCourse(string name)
         {
             Name = name ?? throw new IsuExtraException("Name can't be null");
-            GsaFaculty = gsaFaculty ?? throw new IsuExtraException("Faculty can't be null");
-            GsaFaculty.GsaCourse = this;
             Id = Guid.NewGuid();
             _gsaFlows = new List<GsaFlow>();
         }
 
         public IReadOnlyList<GsaFlow> GsaFlows => _gsaFlows;
-        public Faculty GsaFaculty { get; }
         public string Name { get; }
         public Guid Id { get; }
 
         public bool ContainsStudent(Student student)
         {
-            GsaFlow obtainedObject = _gsaFlows.FirstOrDefault(item => item.ContainsStudent(student));
-            return obtainedObject is not null;
+            return _gsaFlows.Any(item => item.ContainsStudent(student));
         }
 
         public GsaFlow GetFlowByStudent(Student student)

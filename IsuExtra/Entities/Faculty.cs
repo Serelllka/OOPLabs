@@ -15,11 +15,9 @@ namespace IsuExtra.Entities
             Name = name ?? throw new IsuExtraException("name can't be null");
             _groups = new List<GroupInfo>();
             Id = Guid.NewGuid();
-            GsaCourse = null;
         }
 
         public string Name { get; }
-        public GsaCourse GsaCourse { get; set; }
         public Guid Id { get; }
         public bool ContainsGroup(Group @group)
         {
@@ -59,6 +57,16 @@ namespace IsuExtra.Entities
         public GroupInfo FindGroupInfo(Group @group)
         {
             return _groups.FirstOrDefault(item => Equals(item.StudentsGroup, group));
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Faculty faculty && Id == faculty.Id;
         }
     }
 }

@@ -41,12 +41,10 @@ namespace IsuExtra.Entities
                 throw new IsuExtraException("student can't be null");
             }
 
-            if (!_students.Contains(student))
+            if (!_students.Remove(student))
             {
                 throw new IsuExtraException("this student is not contained in this GSA");
             }
-
-            _students.Remove(student);
         }
     }
 }
