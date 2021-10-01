@@ -15,7 +15,7 @@ namespace IsuExtra.Entities
             _students = new List<Student>();
         }
 
-        public IReadOnlyList<Student> Students { get; }
+        public IReadOnlyList<Student> Students => _students;
         public GsaCourse Course { get; }
         public Schedule GsaSchedule { get;  }
 
