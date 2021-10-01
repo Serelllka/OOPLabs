@@ -10,7 +10,7 @@ namespace IsuExtra.Entities
             EndingTime = new Time(
                 startingDay,
                 startingHour + ((startingMinute + duration) / 60),
-                (startingMinute + 90) % 60);
+                (startingMinute + duration) % 60);
         }
 
         public Time StartingTime { get; set; }
