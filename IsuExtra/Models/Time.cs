@@ -6,24 +6,24 @@ namespace IsuExtra.Models
     public class Time
     {
         private DateTime _date;
-        public Time(int day, int hour, int minute)
+        public Time(DateTime dateTime)
         {
-            if (day is > 6 or < 0)
+            if (dateTime.Day is > 6 or < 0)
             {
                 throw new IsuExtraException("Incorrect value of the day");
             }
 
-            if (hour is > 11 or < 6)
+            if (dateTime.Hour is > 22 or < 6)
             {
                 throw new IsuExtraException("Incorrect value of the hour");
             }
 
-            if (minute is > 60 or < 0)
+            if (dateTime.Minute is > 60 or < 0)
             {
                 throw new IsuExtraException("Incorrect value of the minute");
             }
 
-            _date = new DateTime(2228, 2, day, hour, minute, 0);
+            _date = dateTime;
         }
 
         public int Day => _date.Day;

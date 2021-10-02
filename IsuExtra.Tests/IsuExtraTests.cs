@@ -1,4 +1,5 @@
-﻿using Isu.Entities;
+﻿using System;
+using Isu.Entities;
 using IsuExtra.Entities;
 using IsuExtra.Services;
 using IsuExtra.Tools;
@@ -33,20 +34,21 @@ namespace IsuExtra.Tests
             {
                 var GSA = new GsaCourse(null);
             });
-            
+
             Assert.Catch<IsuExtraException>(() =>
             {
-                var lesson = new Lesson(8, 10, 30);
+                var lesson = new Lesson(
+                    new DateTime(1488, 2, 1, 5, 20, 0),
+                    new DateTime(1488, 2, 1, 5, 50, 0)
+                );
             });
             
             Assert.Catch<IsuExtraException>(() =>
             {
-                var lesson = new Lesson(5, 60, 30);
-            });
-            
-            Assert.Catch<IsuExtraException>(() =>
-            {
-                var lesson = new Lesson(5, 8, 90);
+                var lesson = new Lesson(
+                    new DateTime(1488, 2, 7, 8, 20, 0),
+                    new DateTime(1488, 2, 7, 10, 50, 0)
+                );
             });
         }
 
@@ -64,7 +66,10 @@ namespace IsuExtra.Tests
         [Test]
         public void AddSeveralLessonsAtTheSameTime_ThrowsException()
         {
-            var lesson = new Lesson(1, 8, 20);
+            var lesson = new Lesson(
+                new DateTime(1488, 2, 1, 8, 20, 0),
+                new DateTime(1488, 2, 1, 10, 50, 0)
+            );
             var schedule = new Schedule();
             schedule.AddLesson(lesson);
             Assert.Catch<IsuExtraException>(() =>
@@ -76,10 +81,22 @@ namespace IsuExtra.Tests
         [Test]
         public void CreatingSchedule_FirstSecondStackSecondThirdNot()
         {
-            var lesson1 = new Lesson(1, 8, 20);
-            var lesson2 = new Lesson(1, 10, 20);
-            var lesson3 = new Lesson(1, 9, 0);
-            var lesson4 = new Lesson(2, 8, 20);
+            var lesson1 = new Lesson(
+                new DateTime(1488, 2, 1, 8, 20, 0),
+                new DateTime(1488, 2, 1, 10, 50, 0)
+            );
+            var lesson2 = new Lesson(
+                new DateTime(1488, 2, 1, 10, 55, 0),
+                new DateTime(1488, 2, 1, 11, 50, 0)
+            );
+            var lesson3 = new Lesson(
+                new DateTime(1488, 2, 1, 8, 20, 0),
+                new DateTime(1488, 2, 1, 10, 50, 0)
+            );
+            var lesson4 = new Lesson(
+                new DateTime(1488, 2, 2, 8, 20, 0),
+                new DateTime(1488, 2, 2, 10, 50, 0)
+            );
             
             var schedule1 = new Schedule();
             var schedule2 = new Schedule();
@@ -122,7 +139,10 @@ namespace IsuExtra.Tests
             var faculty2 = new Faculty("Master");
             
             var gsaSchedule = new Schedule();
-            var lesson = new Lesson(1, 8, 0);
+            var lesson = new Lesson(
+                new DateTime(1488, 2, 1, 8, 20, 0),
+                new DateTime(1488, 2, 1, 10, 50, 0)
+                );
             gsaSchedule.AddLesson(lesson);
             
             var gsa = new GsaCourse("UltimateGSA");
@@ -130,7 +150,10 @@ namespace IsuExtra.Tests
             _universityManager.RegisterGsaCourse(gsa, faculty2);
             
             var schedule = new Schedule();
-            lesson = new Lesson(1, 9, 0);
+            lesson = new Lesson(
+                new DateTime(1488, 2, 1, 8, 20, 0),
+                new DateTime(1488, 2, 1, 10, 50, 0)
+            );
             schedule.AddLesson(lesson);
 
             _universityManager.RegisterFaculty(faculty1);
@@ -155,7 +178,10 @@ namespace IsuExtra.Tests
             _universityManager.RegisterGsaCourse(gsa, faculty);
             
             var schedule = new Schedule();
-            var lesson = new Lesson(1, 8, 0);
+            var lesson = new Lesson(
+                new DateTime(1488, 2, 1, 8, 20, 0),
+                new DateTime(1488, 2, 1, 10, 50, 0)
+            );
             schedule.AddLesson(lesson);
 
             Group @group = _universityManager.CreateGroup(faculty, schedule, "M3100");

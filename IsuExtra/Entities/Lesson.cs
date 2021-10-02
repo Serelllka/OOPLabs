@@ -5,17 +5,14 @@ namespace IsuExtra.Entities
 {
     public class Lesson
     {
-        public Lesson(int startingDay, int startingHour, int startingMinute, int duration = 90)
+        public Lesson(DateTime startingTime, DateTime endingTime)
         {
-            StartingTime = new Time(startingDay, startingHour, startingMinute);
-            EndingTime = new Time(
-                startingDay,
-                startingHour + ((startingMinute + duration) / 60),
-                (startingMinute + duration) % 60);
+            StartingTime = new Time(startingTime);
+            EndingTime = new Time(endingTime);
         }
 
         public Time StartingTime { get; set; }
-        public Time EndingTime { get; }
+        public Time EndingTime { get; set; }
 
         public bool Stacked(Lesson lesson)
         {
