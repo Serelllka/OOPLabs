@@ -1,5 +1,6 @@
 ﻿using System;
 using IsuExtra.Models;
+using IsuExtra.Tools;
 
 namespace IsuExtra.Entities
 {
@@ -7,6 +8,11 @@ namespace IsuExtra.Entities
     {
         public Lesson(DateTime startingTime, DateTime endingTime)
         {
+            if (DateTime.Compare(startingTime, endingTime) >= 0)
+            {
+                throw new IsuExtraException("Ending time should be later than starting");
+            }
+
             StartingTime = new Time(startingTime);
             EndingTime = new Time(endingTime);
         }
