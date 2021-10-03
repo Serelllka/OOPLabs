@@ -42,14 +42,6 @@ namespace IsuExtra.Tests
                     new DateTime(1488, 2, 1, 5, 50, 0)
                 );
             });
-            
-            Assert.Catch<IsuExtraException>(() =>
-            {
-                var lesson = new Lesson(
-                    new DateTime(1488, 2, 7, 8, 20, 0),
-                    new DateTime(1488, 2, 7, 10, 50, 0)
-                );
-            });
         }
 
         [Test]
