@@ -29,21 +29,21 @@ namespace IsuExtra.Entities
             return _groups.Exists(item => item.StudentsGroup == group);
         }
 
-        public bool ContainsSchedule(Schedule schedule)
+        public bool ContainsStackedSchedule(Schedule schedule)
         {
             if (schedule is null)
             {
                 throw new IsuExtraException("schedule can't be null");
             }
 
-            return _groups.Exists(item => item.Timetable == schedule);
+            return _groups.Exists(item => item.Timetable.Stacked(schedule));
         }
 
-        public void AddGroup(Schedule schedule, Group @group)
+        public void AddGroup(Group @group, Schedule schedule)
         {
-            if (ContainsSchedule(schedule))
+            if (ContainsStackedSchedule(schedule))
             {
-                throw new IsuExtraException("this schedule is already added");
+                throw new IsuExtraException("this schedule can't be added");
             }
 
             if (ContainsGroup(group))

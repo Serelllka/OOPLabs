@@ -86,13 +86,13 @@ namespace IsuExtra.Services
                 throw new IsuExtraException("This faculty should be registered in this service");
             }
 
-            if (_faculties.Exists(item => item.ContainsSchedule(schedule)))
+            if (_faculties.Exists(item => item.ContainsStackedSchedule(schedule)))
             {
                 throw new IsuExtraException("Schedule is already added");
             }
 
             Group newGroup = _isuService.AddGroup(groupName);
-            faculty.AddGroup(schedule, newGroup);
+            faculty.AddGroup(newGroup, schedule);
             return newGroup;
         }
 
