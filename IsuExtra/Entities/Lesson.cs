@@ -8,9 +8,9 @@ namespace IsuExtra.Entities
     {
         public Lesson(DateTime startingTime, DateTime endingTime)
         {
-            if (DateTime.Compare(startingTime, endingTime) >= 0)
+            if ((endingTime - startingTime).TotalMinutes is >= 90 and <= 120)
             {
-                throw new IsuExtraException("Ending time should be later than starting");
+                throw new IsuExtraException("Lesson should last more than 90 minutes");
             }
 
             StartingTime = new Time(startingTime);

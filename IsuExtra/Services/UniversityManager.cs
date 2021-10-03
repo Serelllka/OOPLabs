@@ -168,7 +168,7 @@ namespace IsuExtra.Services
 
         private Faculty FindFacultyByGsa(GsaCourse course)
         {
-            return _courses.First(item => Equals(item.Value, course)).Key;
+            return _courses.First(item => item.Value == course).Key;
         }
 
         private Faculty FindFacultyByGroup(Group @group)

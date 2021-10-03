@@ -8,19 +8,9 @@ namespace IsuExtra.Models
         private DateTime _date;
         public Time(DateTime dateTime)
         {
-            if (dateTime.Day is > 6 or < 0)
-            {
-                throw new IsuExtraException("Incorrect value of the day");
-            }
-
             if (dateTime.Hour is > 22 or < 6)
             {
                 throw new IsuExtraException("Incorrect value of the hour");
-            }
-
-            if (dateTime.Minute is > 60 or < 0)
-            {
-                throw new IsuExtraException("Incorrect value of the minute");
             }
 
             _date = dateTime;

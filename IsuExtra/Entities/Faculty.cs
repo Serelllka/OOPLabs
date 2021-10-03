@@ -26,7 +26,7 @@ namespace IsuExtra.Entities
                 throw new IsuExtraException("group can't be null");
             }
 
-            return _groups.Exists(item => Equals(item.StudentsGroup, group));
+            return _groups.Exists(item => item.StudentsGroup == group);
         }
 
         public bool ContainsSchedule(Schedule schedule)
@@ -36,7 +36,7 @@ namespace IsuExtra.Entities
                 throw new IsuExtraException("schedule can't be null");
             }
 
-            return _groups.Exists(item => Equals(item.Timetable, schedule));
+            return _groups.Exists(item => item.Timetable == schedule);
         }
 
         public void AddGroup(Schedule schedule, Group @group)
@@ -56,7 +56,7 @@ namespace IsuExtra.Entities
 
         public GroupInfo FindGroupInfo(Group @group)
         {
-            return _groups.FirstOrDefault(item => Equals(item.StudentsGroup, group));
+            return _groups.FirstOrDefault(item => item.StudentsGroup == group);
         }
 
         public override int GetHashCode()
