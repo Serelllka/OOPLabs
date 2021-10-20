@@ -1,0 +1,53 @@
+﻿@startuml
+
+
+class Backups.RestorePoint
+{
+    -DateTime _creationDate
+    -List<File> _files
+    -string _folderPath
+}
+
+class Backups.BackupObject
+{
+    -string _fileName
+    -string _filePath
+    +File CreateFileObject()
+}
+
+class Backups.BackupJop
+{
+    -List<BackupObject> _objects
+    -List<RestorePoint> _restorePoints
+    -StorageMethod _method
+    -string _backupDirectory
+    +string Name
+    
+    +CreateRestorePoint()
+    +RemoveRestorePoint(RestorePoint restorePoint)
+}
+
+class Backups.BackupManager
+{
+    -BackupJop _backupJob
+    +CreateBackup(BackupObject object)
+    +Restore(RestorePoint restorePoint)
+}
+
+class BackupsClient.Client
+{
+    +grabSomeData()
+}
+
+class BackupsServer.Server
+{
+    +sendSomeData()
+}
+
+Backups.BackupObject --* Backups.BackupJop
+Backups.File --* Backups.RestorePoint
+Backups.RestorePoint --* Backups.BackupJop
+Backups.BackupJop --* Backups.BackupManager
+Backups.StorageMethod --* Backups.BackupJop
+
+@enduml
