@@ -4,6 +4,6 @@ namespace Backups.Storage
 {
     public interface IStorage
     {
-        Stream GetStream(string archivePath);
+        void SaveFromStream(string archivePath, Stream stream);
     }
 }

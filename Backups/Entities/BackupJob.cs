@@ -12,21 +12,13 @@ namespace Backups.Entities
         private List<JobObject> _jobObjects;
         private List<RestorePoint> _restorePoints;
 
-        public BackupJob(IArchiver archiver, string backupPath)
+        public BackupJob(IArchiver archiver)
         {
-            if (!Directory.Exists(backupPath))
-            {
-                throw new BackupsException("This folder is not exists");
-            }
-
+            Archiver = archiver ?? throw new BackupsException("archiver can't be null");
             _restorePoints = new List<RestorePoint>();
             _jobObjects = new List<JobObject>();
-            Archiver = archiver;
-            FolderPath = backupPath;
         }
 
-        public string FolderPath { get; }
-        public string FolderName => Path.GetDirectoryName(FolderPath);
         protected IReadOnlyList<JobObject> JobObjects => _jobObjects;
         protected IArchiver Archiver { get; }
 
@@ -64,7 +56,7 @@ namespace Backups.Entities
         {
             _restorePoints.Add(new RestorePoint(
                 Archiver,
-                FolderPath + restorePointName,
+                restorePointName,
                 JobObjects,
                 fileSaver,
                 storage));

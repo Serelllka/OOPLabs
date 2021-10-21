@@ -17,8 +17,10 @@ namespace Backups.FileSaver
             uint counter = 1;
             foreach (JobObject jobObject in jobObjects)
             {
-                using Stream stream = storage.GetStream(counter.ToString() + archivePath);
-                archiver.Archive(jobObject, stream);
+                using Stream stream = archiver.Archive(jobObject);
+                storage.SaveFromStream(
+                    archiver.GetArchiveNameFromFileName(archivePath + counter),
+                    stream);
                 ++counter;
             }
         }

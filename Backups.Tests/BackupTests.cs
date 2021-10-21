@@ -1,9 +1,9 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using Backups.Archiver;
 using Backups.Entities;
 using Backups.FileSaver;
-using Backups.Services;
 using Backups.Storage;
 using Backups.Tools;
 using NUnit.Framework;
@@ -14,54 +14,59 @@ namespace Backups.Tests
     {
         private IArchiver _archiver;
         private string _srcPath;
-        private BackupManager _backupManager;
-        
+
         [SetUp]
         public void Setup()
         {
-            _srcPath = @"C:\Users\vprog\RiderProjects\Serelllka\Backups.Tests\Src\";
+            Directory.CreateDirectory("FilesToBackup");
+            File.Create("FilesToBackup/test1.txt").Close();
+            File.Create("FilesToBackup/test2.txt").Close();
+            File.Create("FilesToBackup/test3.txt").Close();
+            Directory.CreateDirectory("Backups");
             _archiver = new ZipArchiver();
-            _backupManager = new BackupManager();
         }
 
         [Test]
         public void CreateBackupJobCreateJobCreateRestorePoint()
         {
-            var storage = new LocalStorage("");
-            var fileSaver = new SingleFileSaver();
+            var storage = new LocalStorage(@"Backups");
+            var fileSaver = new SplitFileSaver();
             
-            var backupJob = new BackupJob(_archiver, _srcPath + @"Backups\BackupJob1\");
-            var backupObject1 = new JobObject(_srcPath + @"FilesToBackup\lol.txt");
-            var backupObject2 = new JobObject(_srcPath + @"FilesToBackup\kek.txt");
+            var backupJob = new BackupJob(_archiver);
+            var backupObject1 = new JobObject(@"FilesToBackup\test1.txt");
+            var backupObject2 = new JobObject(@"FilesToBackup\test2.txt");
             backupJob.AddJobObject(backupObject1);
             backupJob.AddJobObject(backupObject2);
             
-            backupJob.CreateRestorePoint("RestorePoint1.zip", fileSaver, storage);
+            backupJob.CreateRestorePoint("RestorePoint1", fileSaver, storage);
             
-            var backupObject3 = new JobObject(_srcPath + @"FilesToBackup\cheburek.txt");
+            var backupObject3 = new JobObject(@"FilesToBackup\test3.txt");
             backupJob.AddJobObject(backupObject3);
-            backupJob.CreateRestorePoint("RestorePoint2.zip", fileSaver, storage);
+            backupJob.CreateRestorePoint("RestorePoint2", fileSaver, storage);
             
             backupJob.RemoveJobObject(backupObject3);
-            backupJob.CreateRestorePoint("RestorePoint3.zip", fileSaver, storage);
+            backupJob.CreateRestorePoint("RestorePoint3", fileSaver, storage);
+            
+            Assert.True(File.Exists(@"Backups\RestorePoint11.zip"));
+            foreach (string file in Directory.GetFiles("Backups"))
+            {
+                File.Delete(file);
+            }
+            Directory.Delete("Backups");
+            foreach (string file in Directory.GetFiles("FilesToBackup"))
+            {
+                File.Delete(file);
+            }
+            Directory.Delete("FilesToBackup");
         }
 
         [Test]
-        public void CreateJobObjectWithNonExistingFile_ThrowsException()
+        public void CreateJobObjectWithNonExistingArchiver_ThrowsException()
         {
             Assert.Catch<BackupsException>(() =>
             {
-                var backupJob = new BackupJob(_archiver, null);
+                var backupJob = new BackupJob(null);
             });
-        }
-
-        [Test]
-        public void ArchivesFolderThenExtract_FilesInSourceAndDestinationDirectoriesTheSame()
-        {
-            ZipFile.ExtractToDirectory(
-                _srcPath + "zip.zip",
-                _srcPath + "Extract");
-            Assert.True(File.Exists(_srcPath + "Extract/lol.txt "));
         }
     }
 }

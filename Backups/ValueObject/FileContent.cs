@@ -13,7 +13,6 @@ namespace BackupsClient.ValueObject
         {
             RestorePointName = Path.GetFileName(archivePath);
             JobObjectName = Path.GetFileName(Path.GetDirectoryName(archivePath));
-            Data = File.ReadAllBytes(archivePath);
         }
 
         public string JobObjectName { get; set; }
@@ -23,7 +22,9 @@ namespace BackupsClient.ValueObject
         public void CreateFile(string pathToCreate)
         {
             Directory.CreateDirectory(pathToCreate + JobObjectName);
-            Stream stream = new FileStream(pathToCreate + JobObjectName + RestorePointName, FileMode.Create);
+            Stream stream = new FileStream(
+                pathToCreate + JobObjectName + @"\" + RestorePointName,
+                FileMode.Create);
             stream.Write(Data);
             stream.Close();
         }

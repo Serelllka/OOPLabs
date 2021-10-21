@@ -7,8 +7,16 @@ namespace Backups.Archiver
 {
     public class ZipArchiver : IArchiver
     {
-        public void Archive(IReadOnlyList<JobObject> jobObjects, Stream archiveStream)
+        private string _postfix;
+
+        public ZipArchiver()
         {
+            _postfix = ".zip";
+        }
+
+        public Stream Archive(IReadOnlyList<JobObject> jobObjects)
+        {
+            using var archiveStream = new MemoryStream();
             using var zip = new ZipArchive(archiveStream, ZipArchiveMode.Create, leaveOpen: true);
 
             foreach (JobObject jobObject in jobObjects)
@@ -16,16 +24,27 @@ namespace Backups.Archiver
                 ZipArchiveEntry archiveEntry = zip.CreateEntry(jobObject.FileName);
                 using Stream archiveEntryStream = archiveEntry.Open();
                 jobObject.ConvertFileIntoStream().CopyTo(archiveEntryStream);
+                jobObject.CloseStream();
             }
+
+            return archiveStream;
         }
 
-        public void Archive(JobObject jobObject, Stream archiveStream)
+        public Stream Archive(JobObject jobObject)
         {
+            var archiveStream = new MemoryStream();
             using var zip = new ZipArchive(archiveStream, ZipArchiveMode.Create, leaveOpen: true);
 
             ZipArchiveEntry zipArchiveEntry = zip.CreateEntry(jobObject.FileName);
             using Stream archiveEntryStream = zipArchiveEntry.Open();
             jobObject.ConvertFileIntoStream().CopyTo(archiveEntryStream);
+            jobObject.CloseStream();
+            return archiveStream;
+        }
+
+        public string GetArchiveNameFromFileName(string fileName)
+        {
+            return fileName + _postfix;
         }
     }
 }

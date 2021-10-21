@@ -1,19 +1,33 @@
 ﻿using System.IO;
+using Backups.Tools;
 
 namespace Backups.Storage
 {
     public class LocalStorage : IStorage
     {
-        private string _root;
-
-        public LocalStorage(string rootDir)
+        private string _storagePath;
+        public LocalStorage(string storagePath)
         {
-            _root = rootDir;
+            if (storagePath is null)
+            {
+                throw new BackupsException("storage path can't be null");
+            }
+
+            if (!Directory.Exists(storagePath))
+            {
+                throw new BackupsException("This directory is not exists");
+            }
+
+            _storagePath = storagePath;
         }
 
-        public Stream GetStream(string archivePath)
+        public void SaveFromStream(string localArchivePath, Stream stream)
         {
-            return File.OpenWrite(archivePath);
+            stream.Position = 0;
+            FileStream fileStream = File.Create(Path.Combine(_storagePath, localArchivePath));
+            stream.CopyTo(fileStream);
+            fileStream.Close();
+            stream.Close();
         }
     }
 }

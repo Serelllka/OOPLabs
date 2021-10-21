@@ -5,6 +5,7 @@ namespace Backups.Entities
 {
     public class JobObject
     {
+        private Stream _stream;
         public JobObject(string filePath)
         {
             FilePath = filePath;
@@ -19,7 +20,13 @@ namespace Backups.Entities
 
         public Stream ConvertFileIntoStream()
         {
-            return File.OpenRead(FilePath);
+            _stream = File.OpenRead(FilePath);
+            return _stream;
+        }
+
+        public void CloseStream()
+        {
+            _stream.Close();
         }
     }
 }

@@ -6,7 +6,8 @@ namespace Backups.Archiver
 {
     public interface IArchiver
     {
-        void Archive(IReadOnlyList<JobObject> jobObjects, Stream archiveStream);
-        void Archive(JobObject jobObject, Stream archiveStream);
+        Stream Archive(IReadOnlyList<JobObject> jobObjects);
+        Stream Archive(JobObject jobObject);
+        public string GetArchiveNameFromFileName(string fileName);
     }
 }

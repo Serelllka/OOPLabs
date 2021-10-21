@@ -14,8 +14,8 @@ namespace Backups.FileSaver
             IStorage storage,
             IReadOnlyList<JobObject> jobObjects)
         {
-            Stream stream = storage.GetStream(archivePath);
-            archiver.Archive(jobObjects, stream);
+            using Stream stream = archiver.Archive(jobObjects);
+            storage.SaveFromStream(archivePath, stream);
         }
     }
 }
