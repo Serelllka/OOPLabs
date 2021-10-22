@@ -15,7 +15,6 @@ namespace Backups.Entities
         private string _archivePath;
         private IArchiver _archiver;
         private IFileSaver _fileSaver;
-        private List<IArchive> _archives;
 
         public RestorePoint(
             IArchiver archiver,
@@ -27,7 +26,6 @@ namespace Backups.Entities
             _archiver = archiver;
             _archivePath = archivePath;
             _fileSaver = fileSaver;
-            _archives = new List<IArchive>();
 
             _fileSaver.SaveFiles(archiver, archivePath, storage, jobObjects);
         }

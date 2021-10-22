@@ -20,8 +20,8 @@ namespace Backups.Entities
             _jobObjects = new List<JobObject>();
         }
 
-        protected IReadOnlyList<JobObject> JobObjects => _jobObjects;
-        protected IArchiver Archiver { get; }
+        private IReadOnlyList<JobObject> JobObjects => _jobObjects;
+        private IArchiver Archiver { get; }
 
         public void AddJobObject(JobObject jobObject)
         {

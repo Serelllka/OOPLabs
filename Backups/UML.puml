@@ -1,9 +1,23 @@
 ﻿@startuml
 
+interface Backups.IFileSaver
+{
+    +SaveFiles(IArchiver archiver, string archivePath, IStorage storage, IReadOnlyList<JobObject> jobObjects)
+}
+
+interface Backups.IArchiver
+{
+    +Stream Archive(List<JobObject> jobObjects)
+    +Stream Archive(JobObject jobObject)
+    +string GetArchiveNameFromFileName(string fileName)
+}
+
+class Backups.ZipArchiver
+{
+}
 
 class Backups.RestorePoint
 {
-    -DateTime _creationDate
     -List<File> _files
     -string _folderPath
 }
@@ -17,21 +31,12 @@ class Backups.BackupObject
 
 class Backups.BackupJop
 {
-    -List<BackupObject> _objects
+    -List<BackupObject> _JobObjects
     -List<RestorePoint> _restorePoints
-    -StorageMethod _method
-    -string _backupDirectory
-    +string Name
+    -IArchiver Archiver
     
     +CreateRestorePoint()
     +RemoveRestorePoint(RestorePoint restorePoint)
-}
-
-class Backups.BackupManager
-{
-    -BackupJop _backupJob
-    +CreateBackup(BackupObject object)
-    +Restore(RestorePoint restorePoint)
 }
 
 class BackupsClient.Client
@@ -44,10 +49,14 @@ class BackupsServer.Server
     +sendSomeData()
 }
 
+Backups.IArchiver ..|> Backups.ZipArchiver
+Backups.IFileSaver ..|> Backups.SingleFileSaver
+Backups.IFileSaver ..|> Backups.SplitFileSaver
+
+Backups.IArchiver --* Backups.RestorePoint
+Backups.IArchiver --* Backups.BackupJop
 Backups.BackupObject --* Backups.BackupJop
-Backups.File --* Backups.RestorePoint
 Backups.RestorePoint --* Backups.BackupJop
-Backups.BackupJop --* Backups.BackupManager
-Backups.StorageMethod --* Backups.BackupJop
+Backups.File --* Backups.RestorePoint
 
 @enduml
