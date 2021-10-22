@@ -21,9 +21,9 @@ namespace BackupsClient.ValueObject
 
         public void CreateFile(string pathToCreate)
         {
-            Directory.CreateDirectory(pathToCreate + JobObjectName);
+            Directory.CreateDirectory(Path.Combine(pathToCreate, JobObjectName));
             Stream stream = new FileStream(
-                Path.Combine(pathToCreate + JobObjectName, RestorePointName),
+                Path.Combine(pathToCreate, JobObjectName, RestorePointName),
                 FileMode.Create);
             stream.Write(Data);
             stream.Close();

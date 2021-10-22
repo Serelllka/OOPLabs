@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using Backups.Archiver;
 using Backups.FileSaver;
+using Backups.Models;
 using Backups.Storage;
 
 namespace Backups.Entities

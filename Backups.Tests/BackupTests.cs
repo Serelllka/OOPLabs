@@ -4,6 +4,7 @@ using System.IO.Compression;
 using Backups.Archiver;
 using Backups.Entities;
 using Backups.FileSaver;
+using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
 using NUnit.Framework;
@@ -26,18 +27,18 @@ namespace Backups.Tests
                 File.Create(Path.Combine("FilesToBackup", "test3.txt")).Close();
             }
 
-            if (!Directory.Exists("Backups"))
+            if (!Directory.Exists("Backs"))
             {
-                Directory.CreateDirectory("Backups");
+                Directory.CreateDirectory("Backs");
             }
 
             _archiver = new ZipArchiver();
         }
 
         [Test]
-        public void CreateBackupJobCreateJobCreateRestorePoint()
+        public void CreateBackupJobCreateJobCreateRestorePoint_CheckFilesForExisting()
         {
-            var storage = new LocalStorage(@"Backups");
+            var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
             
             var backupJob = new BackupJob(_archiver);
@@ -55,7 +56,7 @@ namespace Backups.Tests
             backupJob.RemoveJobObject(backupObject3);
             backupJob.CreateRestorePoint("RestorePoint3", fileSaver, storage);
             
-            Assert.True(File.Exists(Path.Combine("Backups","RestorePoint11.zip")));
+            Assert.True(File.Exists(Path.Combine("Backs","RestorePoint11.zip")));
         }
 
         [Test]
@@ -70,11 +71,11 @@ namespace Backups.Tests
         [TearDown]
         public void Teardown()
         {
-            foreach (string file in Directory.GetFiles("Backups"))
+            foreach (string file in Directory.GetFiles("Backs"))
             {
                 File.Delete(file);
             }
-            Directory.Delete("Backups");
+            Directory.Delete("Backs");
             foreach (string file in Directory.GetFiles("FilesToBackup"))
             {
                 File.Delete(file);

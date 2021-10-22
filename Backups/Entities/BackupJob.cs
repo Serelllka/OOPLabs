@@ -2,6 +2,7 @@
 using System.IO;
 using Backups.Archiver;
 using Backups.FileSaver;
+using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
 

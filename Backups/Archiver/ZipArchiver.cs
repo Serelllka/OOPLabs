@@ -2,6 +2,7 @@
 using System.IO;
 using System.IO.Compression;
 using Backups.Entities;
+using Backups.Models;
 
 namespace Backups.Archiver
 {

@@ -9,6 +9,7 @@ using System.Text.Json;
 using Backups.Archiver;
 using Backups.Entities;
 using Backups.FileSaver;
+using Backups.Models;
 using BackupsClient.Entities;
 using BackupsClient.Services;
 using BackupsClient.Storage;

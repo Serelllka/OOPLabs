@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Backups.Tools;
 
-namespace Backups.Entities
+namespace Backups.Models
 {
     public class JobObject
     {
