@@ -21,10 +21,10 @@ namespace Backups.Storage
             _storagePath = storagePath;
         }
 
-        public void SaveFromStream(string localArchivePath, Stream stream)
+        public void SaveFromStream(string archivePath, Stream stream)
         {
             stream.Position = 0;
-            FileStream fileStream = File.Create(Path.Combine(_storagePath, localArchivePath));
+            FileStream fileStream = File.Create(Path.Combine(_storagePath, archivePath));
             stream.CopyTo(fileStream);
             fileStream.Close();
             stream.Close();
