@@ -19,9 +19,9 @@ namespace Backups.Tests
         public void Setup()
         {
             Directory.CreateDirectory("FilesToBackup");
-            File.Create("FilesToBackup/test1.txt").Close();
-            File.Create("FilesToBackup/test2.txt").Close();
-            File.Create("FilesToBackup/test3.txt").Close();
+            File.Create(Path.Combine("FilesToBackup","test1.txt")).Close();
+            File.Create(Path.Combine("FilesToBackup","test2.txt")).Close();
+            File.Create(Path.Combine("FilesToBackup","test3.txt")).Close();
             Directory.CreateDirectory("Backups");
             _archiver = new ZipArchiver();
         }
@@ -33,21 +33,21 @@ namespace Backups.Tests
             var fileSaver = new SplitFileSaver();
             
             var backupJob = new BackupJob(_archiver);
-            var backupObject1 = new JobObject(@"FilesToBackup\test1.txt");
-            var backupObject2 = new JobObject(@"FilesToBackup\test2.txt");
+            var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
+            var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
             backupJob.AddJobObject(backupObject2);
             
             backupJob.CreateRestorePoint("RestorePoint1", fileSaver, storage);
             
-            var backupObject3 = new JobObject(@"FilesToBackup\test3.txt");
+            var backupObject3 = new JobObject(Path.Combine("FilesToBackup","test3.txt"));
             backupJob.AddJobObject(backupObject3);
             backupJob.CreateRestorePoint("RestorePoint2", fileSaver, storage);
             
             backupJob.RemoveJobObject(backupObject3);
             backupJob.CreateRestorePoint("RestorePoint3", fileSaver, storage);
             
-            Assert.True(File.Exists(@"Backups\RestorePoint11.zip"));
+            Assert.True(File.Exists(Path.Combine("Backups","RestorePoint11.zip")));
             foreach (string file in Directory.GetFiles("Backups"))
             {
                 File.Delete(file);
