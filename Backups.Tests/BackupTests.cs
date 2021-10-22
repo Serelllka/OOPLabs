@@ -18,11 +18,19 @@ namespace Backups.Tests
         [SetUp]
         public void Setup()
         {
-            Directory.CreateDirectory("FilesToBackup");
-            File.Create(Path.Combine("FilesToBackup","test1.txt")).Close();
-            File.Create(Path.Combine("FilesToBackup","test2.txt")).Close();
-            File.Create(Path.Combine("FilesToBackup","test3.txt")).Close();
-            Directory.CreateDirectory("Backups");
+            if (!Directory.Exists("FilesToBackup"))
+            {
+                Directory.CreateDirectory("FilesToBackup");
+                File.Create(Path.Combine("FilesToBackup", "test1.txt")).Close();
+                File.Create(Path.Combine("FilesToBackup", "test2.txt")).Close();
+                File.Create(Path.Combine("FilesToBackup", "test3.txt")).Close();
+            }
+
+            if (!Directory.Exists("Backups"))
+            {
+                Directory.CreateDirectory("Backups");
+            }
+
             _archiver = new ZipArchiver();
         }
 
@@ -48,6 +56,20 @@ namespace Backups.Tests
             backupJob.CreateRestorePoint("RestorePoint3", fileSaver, storage);
             
             Assert.True(File.Exists(Path.Combine("Backups","RestorePoint11.zip")));
+        }
+
+        [Test]
+        public void CreateJobObjectWithNonExistingArchiver_ThrowsException()
+        {
+            Assert.Catch<BackupsException>(() =>
+            {
+                var backupJob = new BackupJob(null);
+            });
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
             foreach (string file in Directory.GetFiles("Backups"))
             {
                 File.Delete(file);
@@ -58,15 +80,6 @@ namespace Backups.Tests
                 File.Delete(file);
             }
             Directory.Delete("FilesToBackup");
-        }
-
-        [Test]
-        public void CreateJobObjectWithNonExistingArchiver_ThrowsException()
-        {
-            Assert.Catch<BackupsException>(() =>
-            {
-                var backupJob = new BackupJob(null);
-            });
         }
     }
 }
