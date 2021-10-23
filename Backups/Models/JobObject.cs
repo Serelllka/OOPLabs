@@ -1,11 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Backups.Tools;
 
 namespace Backups.Models
 {
     public class JobObject
     {
-        private Stream _stream;
         public JobObject(string filePath)
         {
             FilePath = filePath;
@@ -19,15 +19,11 @@ namespace Backups.Models
         public string FileName { get; }
         public string FilePath { get; }
 
-        public Stream ConvertFileIntoStream()
+        public void CopyFileToStream(Stream stream)
         {
-            _stream = File.OpenRead(FilePath);
-            return _stream;
-        }
-
-        public void CloseStream()
-        {
-            _stream.Close();
+            Stream fileStream = File.OpenRead(FilePath);
+            fileStream.CopyTo(stream);
+            fileStream.Close();
         }
     }
 }

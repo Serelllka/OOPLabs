@@ -24,8 +24,7 @@ namespace Backups.Archiver
             {
                 ZipArchiveEntry archiveEntry = zip.CreateEntry(jobObject.FileName);
                 using Stream archiveEntryStream = archiveEntry.Open();
-                jobObject.ConvertFileIntoStream().CopyTo(archiveEntryStream);
-                jobObject.CloseStream();
+                jobObject.CopyFileToStream(archiveEntryStream);
             }
 
             return archiveStream;
@@ -38,8 +37,7 @@ namespace Backups.Archiver
 
             ZipArchiveEntry zipArchiveEntry = zip.CreateEntry(jobObject.FileName);
             using Stream archiveEntryStream = zipArchiveEntry.Open();
-            jobObject.ConvertFileIntoStream().CopyTo(archiveEntryStream);
-            jobObject.CloseStream();
+            jobObject.CopyFileToStream(archiveEntryStream);
             return archiveStream;
         }
 
