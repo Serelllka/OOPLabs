@@ -14,7 +14,6 @@ namespace Backups.Tests
     public class BackupTests
     {
         private IArchiver _archiver;
-        private string _srcPath;
 
         [SetUp]
         public void Setup()

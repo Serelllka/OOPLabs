@@ -9,13 +9,14 @@ namespace Backups.Models
         public JobObject(string filePath)
         {
             FilePath = filePath;
+            FileName = Path.GetFileName(FilePath);
             if (!File.Exists(FilePath))
             {
                 throw new BackupsException("This file is not exists!");
             }
         }
 
-        public string FileName => Path.GetFileName(FilePath);
+        public string FileName { get; }
         public string FilePath { get; }
 
         public Stream ConvertFileIntoStream()
