@@ -17,7 +17,6 @@ namespace Backups.FileSaver
         {
             using Stream stream = archiver.Archive(jobObjects);
             storage.SaveFromStream(archivePath, stream);
-            stream.Close();
         }
     }
 }

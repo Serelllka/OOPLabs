@@ -21,9 +21,8 @@ namespace Backups.Models
 
         public void CopyFileToStream(Stream stream)
         {
-            Stream fileStream = File.OpenRead(FilePath);
+            using Stream fileStream = File.OpenRead(FilePath);
             fileStream.CopyTo(stream);
-            fileStream.Close();
         }
     }
 }

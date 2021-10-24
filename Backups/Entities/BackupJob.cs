@@ -20,7 +20,6 @@ namespace Backups.Entities
             _jobObjects = new List<JobObject>();
         }
 
-        private IReadOnlyList<JobObject> JobObjects => _jobObjects;
         private IArchiver Archiver { get; }
 
         public void AddJobObject(JobObject jobObject)
@@ -55,12 +54,9 @@ namespace Backups.Entities
 
         public void CreateRestorePoint(string restorePointName, IFileSaver fileSaver, IStorage storage)
         {
-            _restorePoints.Add(new RestorePoint(
-                Archiver,
-                restorePointName,
-                JobObjects,
-                fileSaver,
-                storage));
+            fileSaver.SaveFiles(Archiver, restorePointName, storage, _jobObjects);
+
+            _restorePoints.Add(new RestorePoint(restorePointName));
         }
     }
 }

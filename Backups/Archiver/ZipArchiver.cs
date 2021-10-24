@@ -17,7 +17,7 @@ namespace Backups.Archiver
 
         public Stream Archive(IReadOnlyList<JobObject> jobObjects)
         {
-            using var archiveStream = new MemoryStream();
+            var archiveStream = new MemoryStream();
             using var zip = new ZipArchive(archiveStream, ZipArchiveMode.Create, leaveOpen: true);
 
             foreach (JobObject jobObject in jobObjects)
@@ -32,13 +32,8 @@ namespace Backups.Archiver
 
         public Stream Archive(JobObject jobObject)
         {
-            var archiveStream = new MemoryStream();
-            using var zip = new ZipArchive(archiveStream, ZipArchiveMode.Create, leaveOpen: true);
-
-            ZipArchiveEntry zipArchiveEntry = zip.CreateEntry(jobObject.FileName);
-            using Stream archiveEntryStream = zipArchiveEntry.Open();
-            jobObject.CopyFileToStream(archiveEntryStream);
-            return archiveStream;
+            var list = new List<JobObject> { jobObject };
+            return Archive(list);
         }
 
         public string GetArchiveNameFromFileName(string fileName)

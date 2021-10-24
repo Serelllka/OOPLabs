@@ -12,25 +12,13 @@ namespace Backups.Entities
 {
     public class RestorePoint
     {
-        private string _archivePath;
-        private IArchiver _archiver;
-        private IFileSaver _fileSaver;
-
-        public RestorePoint(
-            IArchiver archiver,
-            string archivePath,
-            IReadOnlyList<JobObject> jobObjects,
-            IFileSaver fileSaver,
-            IStorage storage)
+        public RestorePoint(string archivePath)
         {
-            _archiver = archiver;
-            _archivePath = archivePath;
-            _fileSaver = fileSaver;
-
-            _fileSaver.SaveFiles(archiver, archivePath, storage, jobObjects);
+            PointPath = archivePath;
+            PointName = Path.GetFileName(PointPath);
         }
 
-        public string PointPath => _archivePath;
-        public string PointName => Path.GetFileName(_archivePath);
+        public string PointPath { get; }
+        public string PointName { get; }
     }
 }

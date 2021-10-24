@@ -21,9 +21,9 @@ namespace Backups.Tests
             if (!Directory.Exists("FilesToBackup"))
             {
                 Directory.CreateDirectory("FilesToBackup");
-                File.Create(Path.Combine("FilesToBackup", "test1.txt")).Close();
-                File.Create(Path.Combine("FilesToBackup", "test2.txt")).Close();
-                File.Create(Path.Combine("FilesToBackup", "test3.txt")).Close();
+                File.Create(Path.Combine("FilesToBackup", "test1.txt")).Dispose();
+                File.Create(Path.Combine("FilesToBackup", "test2.txt")).Dispose();
+                File.Create(Path.Combine("FilesToBackup", "test3.txt")).Dispose();
             }
 
             if (!Directory.Exists("Backs"))

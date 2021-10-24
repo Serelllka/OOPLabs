@@ -9,6 +9,6 @@ namespace Backups.Archiver
     {
         Stream Archive(IReadOnlyList<JobObject> jobObjects);
         Stream Archive(JobObject jobObject);
-        public string GetArchiveNameFromFileName(string fileName);
+        string GetArchiveNameFromFileName(string fileName);
     }
 }
