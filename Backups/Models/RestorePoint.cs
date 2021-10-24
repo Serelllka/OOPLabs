@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using Backups.Archiver;
-using Backups.FileSaver;
-using Backups.Models;
-using Backups.Storage;
+﻿using System.IO;
 
-namespace Backups.Entities
+namespace Backups.Models
 {
     public class RestorePoint
     {

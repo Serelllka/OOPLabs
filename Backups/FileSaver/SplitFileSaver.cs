@@ -19,9 +19,11 @@ namespace Backups.FileSaver
             foreach (JobObject jobObject in jobObjects)
             {
                 using Stream stream = archiver.Archive(jobObject);
-                storage.SaveFromStream(
+                using var memoryStream = new MemoryStream();
+                stream.CopyTo(memoryStream);
+                storage.SaveFromByteArray(
                     archiver.GetArchiveNameFromFileName(archivePath + counter),
-                    stream);
+                    memoryStream.ToArray());
                 ++counter;
             }
         }

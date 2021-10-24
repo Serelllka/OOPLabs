@@ -21,13 +21,13 @@ namespace Backups.Storage
             _storagePath = storagePath;
         }
 
-        public void SaveFromStream(string archivePath, Stream stream)
+        public void SaveFromByteArray(string archivePath, byte[] bytes)
         {
-            stream.Position = 0;
             FileStream fileStream = File.Create(Path.Combine(_storagePath, archivePath));
-            stream.CopyTo(fileStream);
-            fileStream.Close();
-            stream.Close();
+            var memoryStream = new MemoryStream(bytes);
+            memoryStream.CopyTo(fileStream);
+            fileStream.Dispose();
+            memoryStream.Dispose();
         }
     }
 }
