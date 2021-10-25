@@ -56,7 +56,6 @@ Backups.IFileSaver ..|> Backups.SplitFileSaver
 Backups.IStorage ..|> Backups.LocalSaver
 Backups.IStorage ..|> BackupsClient.WebFileSaver
 
-Backups.IArchiver --* Backups.RestorePoint
 Backups.IArchiver --* Backups.BackupJop
 Backups.BackupObject --* Backups.BackupJop
 Backups.RestorePoint --* Backups.BackupJop

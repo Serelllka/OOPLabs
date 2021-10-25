@@ -1,13 +1,13 @@
 ﻿using System.IO;
-using Backups.Entities;
+using System.Text.Json.Serialization;
 
-namespace BackupsClient.ValueObject
+namespace Backups.ValueObject
 {
     public class FileContent
     {
-        public FileContent()
-        {
-        }
+        [JsonConstructor]
+        public FileContent(string jobObjectName, string restorePointName, byte[] data) =>
+            (JobObjectName, RestorePointName, Data) = (jobObjectName, restorePointName, data);
 
         public FileContent(string archivePath)
         {
@@ -15,18 +15,16 @@ namespace BackupsClient.ValueObject
             JobObjectName = Path.GetFileName(Path.GetDirectoryName(archivePath));
         }
 
-        public string JobObjectName { get; set; }
-        public string RestorePointName { get; set; }
-        public byte[] Data { get; set; }
+        public string JobObjectName { get; }
+        public string RestorePointName { get; }
+        public byte[] Data { get; }
 
         public void CreateFile(string pathToCreate)
         {
-            Directory.CreateDirectory(Path.Combine(pathToCreate, JobObjectName));
-            Stream stream = new FileStream(
-                Path.Combine(pathToCreate, JobObjectName, RestorePointName),
+            using Stream stream = new FileStream(
+                Path.Combine(pathToCreate, RestorePointName),
                 FileMode.Create);
             stream.Write(Data);
-            stream.Close();
         }
     }
 }

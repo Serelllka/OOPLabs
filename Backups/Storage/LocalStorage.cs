@@ -23,11 +23,9 @@ namespace Backups.Storage
 
         public void SaveFromByteArray(string archivePath, byte[] bytes)
         {
-            FileStream fileStream = File.Create(Path.Combine(_storagePath, archivePath));
-            var memoryStream = new MemoryStream(bytes);
+            using FileStream fileStream = File.Create(Path.Combine(_storagePath, archivePath));
+            using var memoryStream = new MemoryStream(bytes);
             memoryStream.CopyTo(fileStream);
-            fileStream.Dispose();
-            memoryStream.Dispose();
-        }
+            }
     }
 }

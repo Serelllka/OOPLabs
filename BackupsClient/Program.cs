@@ -10,10 +10,7 @@ using Backups.Archiver;
 using Backups.Entities;
 using Backups.FileSaver;
 using Backups.Models;
-using BackupsClient.Entities;
-using BackupsClient.Services;
 using BackupsClient.Storage;
-using BackupsClient.ValueObject;
 using FileInfo = System.IO.FileInfo;
 
 namespace BackupsClient
