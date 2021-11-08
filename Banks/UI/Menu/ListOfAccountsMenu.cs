@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Banks.BuisnessLogic.Accounts;
+using Banks.BusinessLogic.Accounts;
 using Banks.UI.Commands;
 using Spectre.Console;
 
@@ -40,6 +40,10 @@ namespace Banks.UI.Menu
             }
 
             SelectionOptions.Add(new ExitCommand(this));
+            if (SelectionOptions.Count == 1)
+            {
+                SelectionOptions.Add(new NullCommand(this));
+            }
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿using Banks.BuisnessLogic.Accounts;
-using Banks.BuisnessLogic.Entities;
-using Banks.BuisnessLogic.Models;
-using Banks.BuisnessLogic.ValueObject;
+﻿using Banks.BusinessLogic.Accounts;
+using Banks.BusinessLogic.Entities;
+using Banks.BusinessLogic.Models;
+using Banks.BusinessLogic.ValueObject;
 using Microsoft.EntityFrameworkCore;
 
 namespace Banks.Database.Contexts
 {
-    public class Context : DbContext
+    public sealed class Context : DbContext
     {
         public Context(DbContextOptions<Context> options)
             : base(options)

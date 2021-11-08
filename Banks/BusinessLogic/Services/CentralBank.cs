@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Banks.BuisnessLogic.Accounts;
-using Banks.BuisnessLogic.Entities;
-using Banks.BuisnessLogic.Models;
-using Banks.BuisnessLogic.Tools;
+using Banks.BusinessLogic.Accounts;
+using Banks.BusinessLogic.Entities;
+using Banks.BusinessLogic.Models;
+using Banks.BusinessLogic.Tools;
 using Banks.Database.Contexts;
-using Microsoft.EntityFrameworkCore;
 
-namespace Banks.BuisnessLogic.Services
+namespace Banks.BusinessLogic.Services
 {
     public class CentralBank
     {

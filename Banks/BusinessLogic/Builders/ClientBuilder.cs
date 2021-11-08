@@ -1,7 +1,7 @@
-﻿using Banks.BuisnessLogic.Entities;
-using Banks.BuisnessLogic.Tools;
+﻿using Banks.BusinessLogic.Entities;
+using Banks.BusinessLogic.Tools;
 
-namespace Banks.BuisnessLogic.Builders
+namespace Banks.BusinessLogic.Builders
 {
     public class ClientBuilder
     {

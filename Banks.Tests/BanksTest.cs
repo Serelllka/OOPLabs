@@ -1,11 +1,11 @@
 ﻿using System;
-using Banks.BuisnessLogic.Accounts;
-using Banks.BuisnessLogic.Builders;
-using Banks.BuisnessLogic.Entities;
-using Banks.BuisnessLogic.Models;
-using Banks.BuisnessLogic.Services;
-using Banks.BuisnessLogic.Tools;
-using Banks.BuisnessLogic.ValueObject;
+using Banks.BusinessLogic.Accounts;
+using Banks.BusinessLogic.Builders;
+using Banks.BusinessLogic.Entities;
+using Banks.BusinessLogic.Models;
+using Banks.BusinessLogic.Services;
+using Banks.BusinessLogic.Tools;
+using Banks.BusinessLogic.ValueObject;
 using Banks.Database.Contexts;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -110,6 +110,9 @@ namespace Banks.Tests
         public void AddsAccountThenDelete_AccountsAmountIncreasesThenReduces()
         {
             var percentCalculator = new PercentCalculator();
+            const decimal startMoney = 10000;
+            const decimal deltaMoney = 1000;
+            
             const decimal creditTax = 100;
             const decimal debitPercent = 10;
             const string bankName = "testName";
@@ -120,11 +123,17 @@ namespace Banks.Tests
             Client client = _clientBuilder.Build();
             Account account1 = testBank.CreateNewCreditAccount(client);
             Account account2 = testBank.CreateNewDebitAccount(client);
-            account1.AddMoney(10000);
+            account1.AddMoney(startMoney);
             Assert.AreEqual(testBank.GetListOfClientsAccounts(client).Count, 2);
 
-            Transaction transaction = _centralBank.MakeTransaction(account1, account2, 1000);
-            Assert.AreEqual(account1.MoneyAmount, 9000);
+            Transaction transaction = _centralBank.MakeTransaction(
+                account1,
+                account2,
+                deltaMoney);
+            Assert.AreEqual(account1.MoneyAmount, startMoney - deltaMoney);
+            _centralBank.CancelTransaction(transaction);
+            Assert.AreEqual(account1.MoneyAmount, startMoney);
+            Assert.AreEqual(transaction.Status, false);
         }
 
         [Test]

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Banks.BuisnessLogic.Accounts;
-using Banks.BuisnessLogic.Models;
-using Banks.BuisnessLogic.Tools;
+using Banks.BusinessLogic.Accounts;
+using Banks.BusinessLogic.Models;
+using Banks.BusinessLogic.Tools;
 
-namespace Banks.BuisnessLogic.Entities
+namespace Banks.BusinessLogic.Entities
 {
     public class Bank
     {
@@ -66,7 +66,7 @@ namespace Banks.BuisnessLogic.Entities
                 _clients.Add(client);
             }
 
-            var debitAccount = new DebitAccount(this, client, _creditTax);
+            var debitAccount = new DebitAccount(this, client, _debitPercent);
             _accounts.Add(debitAccount);
             return debitAccount;
         }

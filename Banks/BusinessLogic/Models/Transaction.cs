@@ -1,14 +1,14 @@
 ﻿using System;
-using Banks.BuisnessLogic.Accounts;
-using Banks.BuisnessLogic.Tools;
+using Banks.BusinessLogic.Accounts;
+using Banks.BusinessLogic.Tools;
 
-namespace Banks.BuisnessLogic.Models
+namespace Banks.BusinessLogic.Models
 {
     public class Transaction
     {
-        private Account _fromClient;
-        private Account _toClient;
-        private decimal _moneyAmount;
+        private readonly Account _fromClient;
+        private readonly Account _toClient;
+        private readonly decimal _moneyAmount;
         private bool _status;
 
         public Transaction(Account from, Account to, decimal moneyAmount)
@@ -24,6 +24,7 @@ namespace Banks.BuisnessLogic.Models
         { }
 
         public Guid Id { get; private set; }
+        public bool Status => _status;
 
         public void CancelTransaction()
         {

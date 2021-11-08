@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Banks.BuisnessLogic.Tools
+namespace Banks.BusinessLogic.Tools
 {
     public class BanksException : Exception
     {

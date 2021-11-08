@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Banks.BuisnessLogic.ValueObject
+namespace Banks.BusinessLogic.ValueObject
 {
     public class InterestRate
     {

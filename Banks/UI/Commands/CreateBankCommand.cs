@@ -1,6 +1,6 @@
-﻿using Banks.BuisnessLogic.Entities;
-using Banks.BuisnessLogic.Services;
-using Banks.BuisnessLogic.ValueObject;
+﻿using Banks.BusinessLogic.Entities;
+using Banks.BusinessLogic.Services;
+using Banks.BusinessLogic.ValueObject;
 using Spectre.Console;
 
 namespace Banks.UI.Commands

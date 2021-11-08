@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Banks.BuisnessLogic.Entities;
-using Banks.BuisnessLogic.Services;
+using Banks.BusinessLogic.Entities;
+using Banks.BusinessLogic.Services;
 using Banks.UI.Commands;
 using Spectre.Console;
 
@@ -39,6 +39,10 @@ namespace Banks.UI.Menu
             }
 
             SelectionOptions.Add(new ExitCommand(this));
+            if (SelectionOptions.Count == 1)
+            {
+                SelectionOptions.Add(new NullCommand(this));
+            }
         }
     }
 }

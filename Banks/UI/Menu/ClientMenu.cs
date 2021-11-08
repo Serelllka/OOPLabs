@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Banks.BuisnessLogic.Entities;
+using Banks.BusinessLogic.Entities;
 using Banks.UI.Commands;
 using Spectre.Console;
 
@@ -37,6 +37,10 @@ namespace Banks.UI.Menu
                 this,
                 _bank.GetListOfClientsAccounts(_client)));
             SelectionOptions.Add(new ExitCommand(this));
+            if (SelectionOptions.Count == 1)
+            {
+                SelectionOptions.Add(new NullCommand(this));
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Banks.BuisnessLogic.Accounts;
+﻿using Banks.BusinessLogic.Accounts;
 using Banks.UI.Menu;
 
 namespace Banks.UI.Commands

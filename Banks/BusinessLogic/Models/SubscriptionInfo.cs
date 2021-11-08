@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Banks.BuisnessLogic.Models
+namespace Banks.BusinessLogic.Models
 {
     public class SubscriptionInfo
     {

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using Banks.BuisnessLogic.Entities;
-using Banks.BuisnessLogic.Models;
-using Banks.BuisnessLogic.Tools;
+using Banks.BusinessLogic.Entities;
+using Banks.BusinessLogic.Tools;
 
-namespace Banks.BuisnessLogic.Accounts
+namespace Banks.BusinessLogic.Accounts
 {
     public abstract class Account
     {

@@ -1,4 +1,4 @@
-﻿using Banks.BuisnessLogic.Services;
+﻿using Banks.BusinessLogic.Services;
 using Banks.UI.Factory;
 using Banks.UI.Menu;
 using Spectre.Console;

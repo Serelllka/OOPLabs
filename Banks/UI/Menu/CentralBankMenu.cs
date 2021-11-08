@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Banks.BuisnessLogic.Services;
+using Banks.BusinessLogic.Services;
 using Banks.UI.Commands;
 using Spectre.Console;
 

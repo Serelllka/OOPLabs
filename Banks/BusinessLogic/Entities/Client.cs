@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Banks.BuisnessLogic.Models;
+using Banks.BusinessLogic.Models;
 
-namespace Banks.BuisnessLogic.Entities
+namespace Banks.BusinessLogic.Entities
 {
     public class Client : IEquatable<Client>
     {
