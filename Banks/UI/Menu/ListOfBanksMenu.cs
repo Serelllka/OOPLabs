@@ -38,10 +38,7 @@ namespace Banks.UI.Menu
                 SelectionOptions.Add(new SelectBankCommand(this, bank));
             }
 
-            if (SelectionOptions.Count == 1)
-            {
-                SelectionOptions.Add(new NullCommand(this));
-            }
+            SelectionOptions.Add(new ExitCommand(this));
         }
     }
 }

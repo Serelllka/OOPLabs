@@ -17,7 +17,7 @@ namespace Banks.UI.Services
 
         public void Start()
         {
-            _factory = new MenuFactory(new ListOfBanksMenu(
+            _factory = new MenuFactory(new CentralBankMenu(
                 null,
                 _centralBank));
 

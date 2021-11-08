@@ -85,6 +85,8 @@ namespace Banks.BuisnessLogic.Services
             {
                 throw new BanksException("Bank can't be null");
             }
+
+            _banks.Remove(bank);
         }
     }
 }
