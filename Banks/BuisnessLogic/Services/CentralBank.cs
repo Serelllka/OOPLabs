@@ -66,6 +66,9 @@ namespace Banks.BuisnessLogic.Services
             accountFrom.GetMoney(money);
             accountTo.AddMoney(money);
             var transaction = new Transaction(accountFrom, accountTo, money);
+            _transactions.Add(transaction);
+            _contex.Transactions.Add(transaction);
+            _contex.SaveChanges();
             return transaction;
         }
 

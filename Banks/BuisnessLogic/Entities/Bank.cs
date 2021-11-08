@@ -22,12 +22,13 @@ namespace Banks.BuisnessLogic.Entities
             decimal debitPercent,
             PercentCalculator percentCalculator)
         {
-            Name = name;
+            Name = name ?? throw new BanksException("name can't be null");
             _accounts = new List<Account>();
             _clients = new List<Client>();
             _creditTax = creditTax;
             _debitPercent = debitPercent;
-            _percentCalculator = percentCalculator;
+            _percentCalculator = percentCalculator
+                                 ?? throw new BanksException("percentCalculator can't be null");
             Id = Guid.NewGuid();
         }
 

@@ -20,7 +20,7 @@ namespace Banks.Database.Contexts
         public DbSet<CreditAccount> CreditAccounts { get; set; }
         public DbSet<DebitAccount> DebitAccounts { get; set; }
         public DbSet<DepositAccount> DepositAccounts { get; set; }
-        public string DbName { get; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         public void UpdateDatabase()
         {
@@ -30,6 +30,7 @@ namespace Banks.Database.Contexts
 
         public void LoadData()
         {
+            Transactions.Load();
             Clients.Load();
             Accounts.Load();
             Banks.Load();

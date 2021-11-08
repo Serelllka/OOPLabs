@@ -1,4 +1,5 @@
-﻿using Banks.BuisnessLogic.Accounts;
+﻿using System;
+using Banks.BuisnessLogic.Accounts;
 using Banks.BuisnessLogic.Tools;
 
 namespace Banks.BuisnessLogic.Models
@@ -16,10 +17,13 @@ namespace Banks.BuisnessLogic.Models
             _toClient = to;
             _moneyAmount = moneyAmount;
             _status = true;
+            Id = Guid.NewGuid();
         }
 
         private Transaction()
         { }
+
+        public Guid Id { get; private set; }
 
         public void CancelTransaction()
         {
