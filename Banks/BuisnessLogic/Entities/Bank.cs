@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Banks.BuisnessLogic.Accounts;
+using Banks.BuisnessLogic.Models;
 using Banks.BuisnessLogic.Tools;
 
 namespace Banks.BuisnessLogic.Entities
@@ -36,7 +37,7 @@ namespace Banks.BuisnessLogic.Entities
         public Guid Id { get; private set; }
         public IReadOnlyCollection<Client> Clients => _clients;
 
-        public void CreateNewCreditAccount(Client client)
+        public CreditAccount CreateNewCreditAccount(Client client)
         {
             if (client is null)
             {
@@ -48,10 +49,12 @@ namespace Banks.BuisnessLogic.Entities
                 _clients.Add(client);
             }
 
-            _accounts.Add(new CreditAccount(this, client, _creditTax));
+            var creditAccount = new CreditAccount(this, client, _creditTax);
+            _accounts.Add(creditAccount);
+            return creditAccount;
         }
 
-        public void CreateNewDebitAccount(Client client)
+        public DebitAccount CreateNewDebitAccount(Client client)
         {
             if (client is null)
             {
@@ -63,10 +66,12 @@ namespace Banks.BuisnessLogic.Entities
                 _clients.Add(client);
             }
 
-            _accounts.Add(new DebitAccount(this, client, _creditTax));
+            var debitAccount = new DebitAccount(this, client, _creditTax);
+            _accounts.Add(debitAccount);
+            return debitAccount;
         }
 
-        public void CreateNewDepositAccount(Client client)
+        public DepositAccount CreateNewDepositAccount(Client client)
         {
             if (client is null)
             {
@@ -78,12 +83,46 @@ namespace Banks.BuisnessLogic.Entities
                 _clients.Add(client);
             }
 
-            _accounts.Add(new DepositAccount(this, client, _percentCalculator));
+            var depositAccount = new DepositAccount(this, client, _percentCalculator);
+            _accounts.Add(depositAccount);
+            return depositAccount;
         }
 
         public IReadOnlyList<Account> GetListOfClientsAccounts(Client client)
         {
             return _accounts.Where(item => item.OwnerClient.Equals(client)).ToList();
+        }
+
+        public void ChangeCreditTax(decimal newCreditTax)
+        {
+            if (newCreditTax < 0)
+            {
+                throw new BanksException("Credit tax can't be negative");
+            }
+
+            _creditTax = newCreditTax;
+
+            var list = _clients.Where(item => HasCreditAccount(item)).ToList();
+            list.ForEach(item => item.AddSubscriptionInfo(
+                new SubscriptionInfo("Credit tax was changed")));
+        }
+
+        private bool HasCreditAccount(Client client)
+        {
+            return GetListOfClientsAccounts(client).
+                FirstOrDefault(item => item is CreditAccount) is not null;
+        }
+
+        private bool HasDebitAccount(Client client)
+        {
+            return GetListOfClientsAccounts(client).
+                FirstOrDefault(item => item is DebitAccount) is not null;
+        }
+
+        private bool HasDepositAccount(Client client)
+        {
+            return GetListOfClientsAccounts(client).
+                FirstOrDefault(item => item is DepositAccount) is not null;
         }
     }
 }

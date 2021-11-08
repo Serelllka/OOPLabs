@@ -2,14 +2,14 @@
 
 namespace Banks.BuisnessLogic.Models
 {
-    public class SubsriptionInfo
+    public class SubscriptionInfo
     {
-        public SubsriptionInfo(string info)
+        public SubscriptionInfo(string info)
         {
             Info = info;
         }
 
-        private SubsriptionInfo()
+        private SubscriptionInfo()
         { }
 
         public Guid Id { get; private set; }

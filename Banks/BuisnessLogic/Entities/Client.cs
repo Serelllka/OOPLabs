@@ -6,7 +6,7 @@ namespace Banks.BuisnessLogic.Entities
 {
     public class Client : IEquatable<Client>
     {
-        private List<SubsriptionInfo> _subscriptionInfo;
+        private List<SubscriptionInfo> _subscriptionInfo;
 
         public Client()
         { }
@@ -16,13 +16,14 @@ namespace Banks.BuisnessLogic.Entities
             Name = name;
             Surname = surname;
             PassportId = passportId;
-            _subscriptionInfo = new List<SubsriptionInfo>();
+            _subscriptionInfo = new List<SubscriptionInfo>();
         }
 
         public Guid Id { get; private set; }
         public string Name { get; private set; }
         public string Surname { get; private set; }
         public string PassportId { get; private set; }
+        public IReadOnlyList<SubscriptionInfo> UserLog => _subscriptionInfo;
 
         public bool Equals(Client other)
         {
@@ -37,6 +38,11 @@ namespace Banks.BuisnessLogic.Entities
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+
+        public void AddSubscriptionInfo(SubscriptionInfo subscriptionInfo)
+        {
+            _subscriptionInfo.Add(subscriptionInfo);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using Banks.BuisnessLogic.Accounts;
 using Banks.BuisnessLogic.Builders;
 using Banks.BuisnessLogic.Entities;
+using Banks.BuisnessLogic.Models;
 using Banks.BuisnessLogic.Services;
 using Banks.BuisnessLogic.Tools;
 using Banks.BuisnessLogic.ValueObject;
@@ -75,16 +77,71 @@ namespace Banks.Tests
             var percentCalculator = new PercentCalculator();
             const decimal creditTax = 100;
             const decimal debitPercent = 10;
-
+            const string bankName = "testName";
+            var testBank = new Bank(bankName, creditTax, debitPercent, percentCalculator);
+            
             Assert.Catch<BanksException>(() =>
             {
-                var bank = new Bank("Esketit", 1000, 1000, null);
+                var bank = new Bank("Esketit", creditTax, debitPercent, null);
             });
             
             Assert.Catch<BanksException>(() =>
             {
-                var bank = new Bank(null, 1000, 1000, percentCalculator);
+                var bank = new Bank(null, creditTax, debitPercent, percentCalculator);
             });
+
+            Assert.Catch<BanksException>(() =>
+            {
+                testBank.CreateNewCreditAccount(null);
+            });
+            
+            Assert.Catch<BanksException>(() =>
+            {
+                testBank.CreateNewDebitAccount(null);
+            });
+            
+            Assert.Catch<BanksException>(() =>
+            {
+                testBank.CreateNewDepositAccount(null);
+            });
+        }
+
+        [Test]
+        public void AddsAccountThenDelete_AccountsAmountIncreasesThenReduces()
+        {
+            var percentCalculator = new PercentCalculator();
+            const decimal creditTax = 100;
+            const decimal debitPercent = 10;
+            const string bankName = "testName";
+            var testBank = new Bank(bankName, creditTax, debitPercent, percentCalculator);
+            _clientBuilder.SetClientName("Igor");
+            _clientBuilder.SetClientSurname("NeNikolaev");
+            _clientBuilder.SetPassport("2138439");
+            Client client = _clientBuilder.Build();
+            Account account1 = testBank.CreateNewCreditAccount(client);
+            Account account2 = testBank.CreateNewDebitAccount(client);
+            account1.AddMoney(10000);
+            Assert.AreEqual(testBank.GetListOfClientsAccounts(client).Count, 2);
+
+            Transaction transaction = _centralBank.MakeTransaction(account1, account2, 1000);
+            Assert.AreEqual(account1.MoneyAmount, 9000);
+        }
+
+        [Test]
+        public void ChangesAccountParameters_ClientsHasNewLog()
+        {
+            var percentCalculator = new PercentCalculator();
+            const decimal creditTax = 100;
+            const decimal debitPercent = 10;
+            const string bankName = "testName";
+            var testBank = new Bank(bankName, creditTax, debitPercent, percentCalculator);
+            _clientBuilder.SetClientName("Igor");
+            _clientBuilder.SetClientSurname("NeNikolaev");
+            _clientBuilder.SetPassport("2138439");
+            Client client = _clientBuilder.Build();
+            Account account1 = testBank.CreateNewCreditAccount(client);
+            testBank.ChangeCreditTax(12);
+            Assert.AreEqual(client.UserLog.Count, 1);
         }
 
         public void Dispose()

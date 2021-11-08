@@ -39,7 +39,7 @@ namespace Banks.Database.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PercentCalculator>().HasMany<InterestRate>("_interestRate");
-            modelBuilder.Entity<Client>().HasMany<SubsriptionInfo>("_subscriptionInfo");
+            modelBuilder.Entity<Client>().HasMany<SubscriptionInfo>("_subscriptionInfo");
             modelBuilder.Entity<Bank>().HasMany<Account>("_accounts")
                 .WithOne(x => x.OwnerBank);
             modelBuilder.Entity<Bank>().HasMany<Client>("_clients");
