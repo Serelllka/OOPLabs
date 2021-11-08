@@ -1,0 +1,45 @@
+﻿@startuml
+'https://plantuml.com/class-diagram
+
+class CentralBank
+{
+    +RegisterBank()
+    +DeleteBank()
+}
+
+class Bank
+{
+    -List<BankAccount> _bankAccounts
+    +void RegisterClient()
+    +void RemoveClient()
+    +void RegisterBankAccount()
+    +void DeleteBankAccount()
+}
+
+abstract BankAccount
+{
+    public decimal MoneyAmount
+    public Bank OwnerBank
+    public Client OwnerClient
+    public Guid Id
+}
+
+class DepositAccount
+{
+}
+
+class DebitAccount 
+{
+}
+
+class IDeposit
+{
+}
+
+
+CentralBank *-- Bank
+CreditAccount ..|> BankAccount
+DepositAccount ..|> BankAccount
+DebitAccount ..|> BankAccount
+
+@enduml
