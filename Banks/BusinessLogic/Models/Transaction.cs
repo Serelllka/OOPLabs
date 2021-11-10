@@ -45,12 +45,7 @@ namespace Banks.BusinessLogic.Models
 
         private bool CanCancel()
         {
-            if (_toClient.CanWithdraw(_moneyAmount))
-            {
-                return true;
-            }
-
-            return false;
+            return _toClient.CanWithdraw(_moneyAmount);
         }
     }
 }

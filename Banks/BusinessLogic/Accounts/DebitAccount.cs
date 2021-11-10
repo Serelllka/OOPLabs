@@ -20,15 +20,15 @@ namespace Banks.BusinessLogic.Accounts
         {
             if (money < 0)
             {
-                throw new BanksException("You can't withdraw");
+                return false;
             }
 
             return money <= MoneyAmount;
         }
 
-        public override string GetTypeInString()
+        public override void AccrueInterest()
         {
-            return "debit";
+            MoneyAmount += MoneyAmount * _percent;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Banks.BusinessLogic.Entities;
+﻿using System;
+using Banks.BusinessLogic.Entities;
 using Banks.BusinessLogic.Tools;
 
 namespace Banks.BusinessLogic.Accounts
@@ -6,11 +7,17 @@ namespace Banks.BusinessLogic.Accounts
     public class DepositAccount : Account
     {
         private PercentCalculator _percentCalculator;
+        private DateTime _withdrawDateTime;
         private bool _canWithdraw;
 
-        public DepositAccount(Bank bank, Client client, PercentCalculator percentCalculator)
+        public DepositAccount(
+            Bank bank,
+            Client client,
+            PercentCalculator percentCalculator,
+            DateTime withdrawDateTime)
             : base(bank, client)
         {
+            _withdrawDateTime = withdrawDateTime;
             _canWithdraw = false;
             _percentCalculator = percentCalculator;
         }
@@ -18,14 +25,17 @@ namespace Banks.BusinessLogic.Accounts
         private DepositAccount()
         { }
 
-        public void AccrueInterest()
+        public override void AccrueInterest()
         {
             MoneyAmount += MoneyAmount * _percentCalculator.GetPercent(MoneyAmount);
         }
 
-        public void AllowWithdraw()
+        public void UpdateWithdrawStatus(DateTime currDateTime)
         {
-            _canWithdraw = true;
+            if (currDateTime > _withdrawDateTime)
+            {
+                _canWithdraw = true;
+            }
         }
 
         public override void GetMoney(decimal money)
@@ -56,11 +66,6 @@ namespace Banks.BusinessLogic.Accounts
             }
 
             return money <= MoneyAmount;
-        }
-
-        public override string GetTypeInString()
-        {
-            return "deposit";
         }
     }
 }

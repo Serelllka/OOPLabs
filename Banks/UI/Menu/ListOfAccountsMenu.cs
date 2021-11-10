@@ -22,12 +22,19 @@ namespace Banks.UI.Menu
             int index = 1;
             foreach (Account account in _accounts)
             {
+                string accountType = account switch
+                {
+                    CreditAccount => "credit",
+                    DebitAccount => "debit",
+                    _ => "deposit"
+                };
                 RenderTable.AddRow(
                     index.ToString(),
                     account.OwnerClient.Name + ' ' + account.OwnerClient.Surname,
                     account.OwnerClient.PassportId,
-                    account.GetTypeInString(),
+                    accountType,
                     account.Id.ToString());
+                ++index;
             }
         }
 

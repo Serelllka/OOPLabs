@@ -17,13 +17,20 @@ namespace Banks.UI.Menu
 
         public override void UpdateTable()
         {
+            string accountType = _account switch
+            {
+                CreditAccount => "credit",
+                DebitAccount => "debit",
+                _ => "deposit"
+            };
+
             RenderTable = new Table();
             RenderTable.AddColumns("Owner name", "Owner bank", "Money amount", "Account type");
             RenderTable.AddRow(
                 _account.OwnerClient.Name + ' ' + _account.OwnerClient.Surname,
                 _account.OwnerBank.Name,
                 _account.MoneyAmount.ToString(CultureInfo.InvariantCulture),
-                _account.GetTypeInString());
+                accountType);
         }
 
         public override void UpdateListOfOptions()

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Banks.BusinessLogic.Accounts;
 using Banks.BusinessLogic.Entities;
@@ -13,6 +14,7 @@ namespace Banks.BusinessLogic.Services
         private Context _contex;
         private List<Bank> _banks;
         private List<Transaction> _transactions;
+        private TimeManager _timeManager;
 
         public CentralBank(Context context)
         {
@@ -21,6 +23,7 @@ namespace Banks.BusinessLogic.Services
             _banks = new List<Bank>();
             _banks = context.Banks.ToList();
             _transactions = new List<Transaction>();
+            _timeManager = new TimeManager();
         }
 
         public IReadOnlyCollection<Bank> Banks => _banks;
@@ -89,6 +92,19 @@ namespace Banks.BusinessLogic.Services
             }
 
             _banks.Remove(bank);
+        }
+
+        public void SkipDay()
+        {
+            _timeManager.SkipDay();
+            foreach (Account account in _banks.SelectMany(bank => bank.Accounts))
+            {
+                account.AccrueInterest();
+                if (account is DepositAccount depositAccount)
+                {
+                    depositAccount.UpdateWithdrawStatus(_timeManager.CurrentDateTime);
+                }
+            }
         }
     }
 }

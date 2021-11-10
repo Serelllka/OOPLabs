@@ -42,16 +42,16 @@ namespace Banks.Tests
             percentCalculator3.AddInterestRate(new InterestRate(30000, 6));
             percentCalculator3.AddInterestRate(new InterestRate(300000, 11));
             
-            _context.UpdateDatabase();
+            _context.RecreateDatabase();
             var tmpCentralBank = new CentralBank(_context);
             _clientBuilder = new ClientBuilder();
 
             tmpCentralBank.RegisterNewBank(
-                new Bank("Tinkoff", 20, 10, percentCalculator1));
+                new Bank("Tinkoff", 20, 10, 1, percentCalculator1));
             tmpCentralBank.RegisterNewBank(
-                new Bank("AlphaBank", 15, 12, percentCalculator2));
+                new Bank("AlphaBank", 15, 12, 1, percentCalculator2));
             tmpCentralBank.RegisterNewBank(
-                new Bank("Sberbank", 13, 9, percentCalculator3));
+                new Bank("Sberbank", 13, 9, 1, percentCalculator3));
             
             _centralBank = new CentralBank(_context);
         }
@@ -67,7 +67,7 @@ namespace Banks.Tests
         public void AddsBank_BanksAmountIncreases()
         {
             var percentCalculator = new PercentCalculator();
-            _centralBank.RegisterNewBank(new Bank("Esketit", 1000, 1000, percentCalculator));
+            _centralBank.RegisterNewBank(new Bank("Esketit", 1000, 1000, 1, percentCalculator));
             Assert.AreEqual(_centralBank.Banks.Count, 4);
         }
 
@@ -77,17 +77,18 @@ namespace Banks.Tests
             var percentCalculator = new PercentCalculator();
             const decimal creditTax = 100;
             const decimal debitPercent = 10;
+            const int daysBeforeWithdraw = 1;
             const string bankName = "testName";
-            var testBank = new Bank(bankName, creditTax, debitPercent, percentCalculator);
+            var testBank = new Bank(bankName, creditTax, debitPercent, daysBeforeWithdraw, percentCalculator);
             
             Assert.Catch<BanksException>(() =>
             {
-                var bank = new Bank("Esketit", creditTax, debitPercent, null);
+                var bank = new Bank("Esketit", creditTax, debitPercent, daysBeforeWithdraw , null);
             });
             
             Assert.Catch<BanksException>(() =>
             {
-                var bank = new Bank(null, creditTax, debitPercent, percentCalculator);
+                var bank = new Bank(null, creditTax, debitPercent, daysBeforeWithdraw, percentCalculator);
             });
 
             Assert.Catch<BanksException>(() =>
@@ -116,7 +117,7 @@ namespace Banks.Tests
             const decimal creditTax = 100;
             const decimal debitPercent = 10;
             const string bankName = "testName";
-            var testBank = new Bank(bankName, creditTax, debitPercent, percentCalculator);
+            var testBank = new Bank(bankName, creditTax, debitPercent, 1, percentCalculator);
             _clientBuilder.SetClientName("Igor");
             _clientBuilder.SetClientSurname("NeNikolaev");
             _clientBuilder.SetPassport("2138439");
@@ -143,7 +144,7 @@ namespace Banks.Tests
             const decimal creditTax = 100;
             const decimal debitPercent = 10;
             const string bankName = "testName";
-            var testBank = new Bank(bankName, creditTax, debitPercent, percentCalculator);
+            var testBank = new Bank(bankName, creditTax, debitPercent, 1, percentCalculator);
             _clientBuilder.SetClientName("Igor");
             _clientBuilder.SetClientSurname("NeNikolaev");
             _clientBuilder.SetPassport("2138439");

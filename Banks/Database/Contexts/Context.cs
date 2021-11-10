@@ -22,7 +22,7 @@ namespace Banks.Database.Contexts
         public DbSet<DepositAccount> DepositAccounts { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
-        public void UpdateDatabase()
+        public void RecreateDatabase()
         {
             Database.EnsureDeleted();
             Database.EnsureCreated();

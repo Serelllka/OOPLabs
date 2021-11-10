@@ -20,7 +20,7 @@ namespace Banks
                     UseSqlite("Filename=banks.sqlite").
                     Options);
 
-            context.UpdateDatabase();
+            context.RecreateDatabase();
             var cb = new CentralBank(context);
             var percentCalculator = new PercentCalculator();
             percentCalculator.AddInterestRate(new InterestRate(1000, 10));
@@ -31,11 +31,11 @@ namespace Banks
             clientBuilder.SetPassport("12345");
             Client client = clientBuilder.Build();
 
-            var bank1 = new Bank("Tinkoff", 20, 10, percentCalculator);
+            var bank1 = new Bank("Tinkoff", 20, 10, 1, percentCalculator);
             bank1.CreateNewDebitAccount(client);
-            var bank2 = new Bank("AlphaBank", 15, 12, percentCalculator);
+            var bank2 = new Bank("AlphaBank", 15, 12, 1, percentCalculator);
             bank2.CreateNewDebitAccount(client);
-            var bank3 = new Bank("Sberbank", 13, 9, percentCalculator);
+            var bank3 = new Bank("Sberbank", 13, 9, 1, percentCalculator);
 
             cb.RegisterNewBank(bank1);
             cb.RegisterNewBank(bank2);

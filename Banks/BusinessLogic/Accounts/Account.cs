@@ -48,6 +48,6 @@ namespace Banks.BusinessLogic.Accounts
         }
 
         public abstract bool CanWithdraw(decimal money);
-        public abstract string GetTypeInString();
+        public abstract void AccrueInterest();
     }
 }

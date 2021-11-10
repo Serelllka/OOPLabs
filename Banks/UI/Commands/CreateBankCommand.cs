@@ -30,10 +30,13 @@ namespace Banks.UI.Commands
                 percentCalculator.AddInterestRate(new InterestRate(accountBalance, percent));
             }
 
+            int daysBeforeWithdraw = AnsiConsole.Ask<int>("Enter days before withdraw");
+
             _centralBank.RegisterNewBank(new Bank(
                 bankName,
                 creditTax,
                 debitPercent,
+                daysBeforeWithdraw,
                 percentCalculator));
 
             return CurrentMenu;

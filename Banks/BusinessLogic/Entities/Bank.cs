@@ -13,6 +13,7 @@ namespace Banks.BusinessLogic.Entities
         private List<Client> _clients;
         private decimal _creditTax;
         private decimal _debitPercent;
+        private int _daysBeforeWithdraw;
         private PercentCalculator _percentCalculator;
 
         public Bank()
@@ -21,9 +22,16 @@ namespace Banks.BusinessLogic.Entities
             string name,
             decimal creditTax,
             decimal debitPercent,
+            int daysBeforeWithdraw,
             PercentCalculator percentCalculator)
         {
             Name = name ?? throw new BanksException("name can't be null");
+            _daysBeforeWithdraw = daysBeforeWithdraw;
+            if (daysBeforeWithdraw < 0)
+            {
+                throw new BanksException("daysBeforeWithdraw must be positive");
+            }
+
             _accounts = new List<Account>();
             _clients = new List<Client>();
             _creditTax = creditTax;
@@ -36,6 +44,7 @@ namespace Banks.BusinessLogic.Entities
         public string Name { get; private set; }
         public Guid Id { get; private set; }
         public IReadOnlyCollection<Client> Clients => _clients;
+        public IReadOnlyCollection<Account> Accounts => _accounts;
 
         public CreditAccount CreateNewCreditAccount(Client client)
         {
@@ -83,7 +92,11 @@ namespace Banks.BusinessLogic.Entities
                 _clients.Add(client);
             }
 
-            var depositAccount = new DepositAccount(this, client, _percentCalculator);
+            var depositAccount = new DepositAccount(
+                this,
+                client,
+                _percentCalculator,
+                DateTime.Now.AddDays(_daysBeforeWithdraw));
             _accounts.Add(depositAccount);
             return depositAccount;
         }
@@ -110,19 +123,19 @@ namespace Banks.BusinessLogic.Entities
         private bool HasCreditAccount(Client client)
         {
             return GetListOfClientsAccounts(client).
-                FirstOrDefault(item => item is CreditAccount) is not null;
+                Any(item => item is CreditAccount);
         }
 
         private bool HasDebitAccount(Client client)
         {
             return GetListOfClientsAccounts(client).
-                FirstOrDefault(item => item is DebitAccount) is not null;
+                Any(item => item is DebitAccount);
         }
 
         private bool HasDepositAccount(Client client)
         {
             return GetListOfClientsAccounts(client).
-                FirstOrDefault(item => item is DepositAccount) is not null;
+                Any(item => item is DepositAccount);
         }
     }
 }

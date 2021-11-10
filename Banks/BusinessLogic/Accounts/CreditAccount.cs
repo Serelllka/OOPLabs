@@ -17,17 +17,10 @@ namespace Banks.BusinessLogic.Accounts
 
         public override bool CanWithdraw(decimal money)
         {
-            if (money < 0)
-            {
-                throw new BanksException("You can't withdraw");
-            }
-
-            return true;
+            return money >= 0;
         }
 
-        public override string GetTypeInString()
-        {
-            return "credit";
-        }
+        public override void AccrueInterest()
+        { }
     }
 }
