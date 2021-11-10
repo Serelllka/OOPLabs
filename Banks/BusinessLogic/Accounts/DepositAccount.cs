@@ -40,7 +40,7 @@ namespace Banks.BusinessLogic.Accounts
 
         public override void GetMoney(decimal money)
         {
-            if (_canWithdraw is false)
+            if (!_canWithdraw)
             {
                 throw new BanksException("You can't withdraw from this account");
             }
