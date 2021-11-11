@@ -12,16 +12,15 @@ using NUnit.Framework;
 
 namespace Banks.Tests
 {
-    public class BanksTest : System.IDisposable
+    public class BanksTest
     {
-        private Context _context;
         private CentralBank _centralBank;
         private ClientBuilder _clientBuilder;
         
         [SetUp]
         public void Setup()
         {
-            _context = new Context(
+            var context = new Context(
                 new DbContextOptionsBuilder<Context>().
                     UseInMemoryDatabase(Guid.NewGuid().ToString()).
                     Options);
@@ -42,8 +41,8 @@ namespace Banks.Tests
             percentCalculator3.AddInterestRate(new InterestRate(30000, 6));
             percentCalculator3.AddInterestRate(new InterestRate(300000, 11));
             
-            _context.RecreateDatabase();
-            var tmpCentralBank = new CentralBank(_context);
+            context.RecreateDatabase();
+            var tmpCentralBank = new CentralBank(context);
             _clientBuilder = new ClientBuilder();
 
             tmpCentralBank.RegisterNewBank(
@@ -53,7 +52,7 @@ namespace Banks.Tests
             tmpCentralBank.RegisterNewBank(
                 new Bank("Sberbank", 13, 9, 1, percentCalculator3));
             
-            _centralBank = new CentralBank(_context);
+            _centralBank = new CentralBank(context);
         }
 
         [Test]
@@ -82,29 +81,24 @@ namespace Banks.Tests
             var testBank = new Bank(bankName, creditTax, debitPercent, daysBeforeWithdraw, percentCalculator);
             
             Assert.Catch<BanksException>(() =>
-            {
-                var bank = new Bank("Esketit", creditTax, debitPercent, daysBeforeWithdraw , null);
-            });
+                new Bank("Esketit",
+                    creditTax,
+                    debitPercent,
+                    daysBeforeWithdraw,
+                    null));
             
-            Assert.Catch<BanksException>(() =>
-            {
-                var bank = new Bank(null, creditTax, debitPercent, daysBeforeWithdraw, percentCalculator);
-            });
+            Assert.Catch<BanksException>(() => 
+                new Bank(null,
+                creditTax,
+                debitPercent,
+                daysBeforeWithdraw,
+                percentCalculator));
 
-            Assert.Catch<BanksException>(() =>
-            {
-                testBank.CreateNewCreditAccount(null);
-            });
+            Assert.Catch<BanksException>(() => testBank.CreateNewCreditAccount(null));
             
-            Assert.Catch<BanksException>(() =>
-            {
-                testBank.CreateNewDebitAccount(null);
-            });
+            Assert.Catch<BanksException>(() => testBank.CreateNewDebitAccount(null));
             
-            Assert.Catch<BanksException>(() =>
-            {
-                testBank.CreateNewDepositAccount(null);
-            });
+            Assert.Catch<BanksException>(() => testBank.CreateNewDepositAccount(null));
         }
 
         [Test]
@@ -156,7 +150,7 @@ namespace Banks.Tests
 
         public void Dispose()
         {
-            _context.Dispose();
+            throw new NotImplementedException();
         }
     }
 }

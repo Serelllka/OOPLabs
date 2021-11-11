@@ -1,15 +1,22 @@
-﻿namespace Banks.UI.Commands
+﻿using Banks.BusinessLogic.Accounts;
+using Spectre.Console;
+
+namespace Banks.UI.Commands
 {
     public class AddMoneyToAccountCommand : Command
     {
-        public AddMoneyToAccountCommand(Menu.Menu currentMenu)
+        private Account _currentAccount;
+        public AddMoneyToAccountCommand(Menu.Menu currentMenu, Account account)
             : base(currentMenu)
         {
+            _currentAccount = account;
         }
 
         public override Menu.Menu Execute()
         {
-            throw new System.NotImplementedException();
+            decimal moneyAmount = AnsiConsole.Ask<decimal>("Enter additional money");
+            _currentAccount.AddMoney(moneyAmount);
+            return CurrentMenu.PrevMenu;
         }
 
         public override string ToString()

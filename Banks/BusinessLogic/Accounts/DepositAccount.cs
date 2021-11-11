@@ -8,7 +8,7 @@ namespace Banks.BusinessLogic.Accounts
     {
         private PercentCalculator _percentCalculator;
         private DateTime _withdrawDateTime;
-        private bool _canWithdraw;
+        private bool _isWithdrawable;
 
         public DepositAccount(
             Bank bank,
@@ -18,7 +18,7 @@ namespace Banks.BusinessLogic.Accounts
             : base(bank, client)
         {
             _withdrawDateTime = withdrawDateTime;
-            _canWithdraw = false;
+            _isWithdrawable = false;
             _percentCalculator = percentCalculator;
         }
 
@@ -34,13 +34,13 @@ namespace Banks.BusinessLogic.Accounts
         {
             if (currDateTime > _withdrawDateTime)
             {
-                _canWithdraw = true;
+                _isWithdrawable = true;
             }
         }
 
         public override void GetMoney(decimal money)
         {
-            if (!_canWithdraw)
+            if (!_isWithdrawable)
             {
                 throw new BanksException("You can't withdraw from this account");
             }

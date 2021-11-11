@@ -115,27 +115,16 @@ namespace Banks.BusinessLogic.Entities
 
             _creditTax = newCreditTax;
 
-            var list = _clients.Where(item => HasCreditAccount(item)).ToList();
+            var list = _clients.Where(HasAccount<CreditAccount>).ToList();
             list.ForEach(item => item.AddSubscriptionInfo(
                 new SubscriptionInfo("Credit tax was changed")));
         }
 
-        private bool HasCreditAccount(Client client)
+        private bool HasAccount<T>(Client client)
+            where T : Account
         {
             return GetListOfClientsAccounts(client).
-                Any(item => item is CreditAccount);
-        }
-
-        private bool HasDebitAccount(Client client)
-        {
-            return GetListOfClientsAccounts(client).
-                Any(item => item is DebitAccount);
-        }
-
-        private bool HasDepositAccount(Client client)
-        {
-            return GetListOfClientsAccounts(client).
-                Any(item => item is DepositAccount);
+                Any(item => item is T);
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Banks.UI.Menu
                 SelectionOptions.Add(new GetMoneyFromAccountCommand(this));
             }
 
-            SelectionOptions.Add(new AddMoneyToAccountCommand(this));
+            SelectionOptions.Add(new AddMoneyToAccountCommand(this, _account));
             SelectionOptions.Add(new MoreInfoAboutAccountCommand(this));
             SelectionOptions.Add(new ExitCommand(this));
             if (SelectionOptions.Count == 1)

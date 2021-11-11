@@ -19,7 +19,7 @@ namespace Banks.BusinessLogic.Entities
 
         public int GetNumberOfRates()
         {
-            return _interestRate.Count();
+            return _interestRate.Count;
         }
 
         public void AddInterestRate(InterestRate interestRate)
