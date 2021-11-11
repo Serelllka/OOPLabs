@@ -9,7 +9,7 @@
 
         public override Menu.Menu Execute()
         {
-            throw new System.NotImplementedException();
+            return CurrentMenu;
         }
 
         public override string ToString()

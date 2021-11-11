@@ -16,7 +16,7 @@ namespace Banks.UI.Commands
         {
             decimal moneyAmount = AnsiConsole.Ask<decimal>("Enter additional money");
             _currentAccount.AddMoney(moneyAmount);
-            return CurrentMenu.PrevMenu;
+            return CurrentMenu;
         }
 
         public override string ToString()

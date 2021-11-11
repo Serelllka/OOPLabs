@@ -147,10 +147,5 @@ namespace Banks.Tests
             testBank.ChangeCreditTax(12);
             Assert.AreEqual(client.UserLog.Count, 1);
         }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

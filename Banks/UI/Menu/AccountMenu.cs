@@ -39,7 +39,7 @@ namespace Banks.UI.Menu
 
             if (_account.CanWithdraw(0))
             {
-                SelectionOptions.Add(new GetMoneyFromAccountCommand(this));
+                SelectionOptions.Add(new GetMoneyFromAccountCommand(this, _account));
             }
 
             SelectionOptions.Add(new AddMoneyToAccountCommand(this, _account));
