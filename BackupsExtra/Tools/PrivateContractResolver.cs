@@ -9,12 +9,11 @@ namespace BackupsExtra.Tools
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             JsonProperty property = base.CreateProperty(member, memberSerialization);
-            if (!property.Writable)
-            {
-                var info = member as PropertyInfo;
-                bool hasPrivateSetter = info?.GetSetMethod(true) != null;
-                property.Writable = hasPrivateSetter;
-            }
+            if (property.Writable) return property;
+
+            var info = member as PropertyInfo;
+            bool hasPrivateSetter = info?.GetSetMethod(true) != null;
+            property.Writable = hasPrivateSetter;
 
             return property;
         }

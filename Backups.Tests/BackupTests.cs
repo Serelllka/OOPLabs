@@ -37,10 +37,11 @@ namespace Backups.Tests
         [Test]
         public void CreateBackupJobCreateJobCreateRestorePoint_CheckFilesForExisting()
         {
+            const int restorePointCounter = 2;
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
 
-            var backupJob = new BackupJob(_archiver);
+            var backupJob = new BackupJob(_archiver, restorePointCounter);
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
@@ -61,9 +62,11 @@ namespace Backups.Tests
         [Test]
         public void CreateJobObjectWithNonExistingArchiver_ThrowsException()
         {
+            const int restorePointCounter = 2;
+            
             Assert.Catch<BackupsException>(() =>
             {
-                var backupJob = new BackupJob(null);
+                var backupJob = new BackupJob(null, restorePointCounter);
             });
         }
 

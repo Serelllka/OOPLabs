@@ -17,14 +17,15 @@ namespace BackupsClient
 {  
     class Program  
     {
-        static void Main(string[] args)  
+        static void Main(string[] args)
         {
+            const int restorePointCounter = 2;
             const string srcPath = @"C:\Users\vprog\RiderProjects\Serelllka\BackupsClient\Src\";
             var storage = new WebStorage(new TcpClient("127.0.0.1", 1234));
             var fileSaver = new SingleFileSaver();
             var archiver = new ZipArchiver();
 
-            var backupJob = new BackupJob(archiver);
+            var backupJob = new BackupJob(archiver, restorePointCounter);
             var backupObject1 = new JobObject(srcPath + @"FilesToBackup\lol.txt");
             var backupObject2 = new JobObject(srcPath + @"FilesToBackup\kek.txt");
             backupJob.AddJobObject(backupObject1);
