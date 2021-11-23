@@ -1,19 +1,22 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
+﻿using System.IO;
+using System.Linq;
 using Backups.Archiver;
 using Backups.Entities;
 using Backups.FileSaver;
 using Backups.Models;
 using Backups.Storage;
-using Backups.Tools;
+using BackupsExtra.Configuration;
+using BackupsExtra.Services;
+using BackupsExtra.Tools;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Backups.Tests
+namespace BackupsExtra.Tests
 {
-    public class BackupTests
+    public class BackupsExtraTests
     {
-        private IArchiver _archiver;
+        private ZipArchiver _archiver;
+        private FileJsonStateService _stateService;
 
         [SetUp]
         public void Setup()
@@ -32,6 +35,14 @@ namespace Backups.Tests
             }
 
             _archiver = new ZipArchiver();
+            _stateService = new FileJsonStateService();
+            _stateService.SetFilename("config.cfg");
+            _stateService.SetJsonSettings(new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All,
+                ContractResolver = new PrivateContractResolver(),
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            });
         }
 
         [Test]
@@ -39,7 +50,7 @@ namespace Backups.Tests
         {
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
-
+            
             var backupJob = new BackupJob(_archiver);
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
@@ -59,27 +70,23 @@ namespace Backups.Tests
         }
 
         [Test]
-        public void CreateJobObjectWithNonExistingArchiver_ThrowsException()
+        public void CreateBackupJobSaveItThenLoad_BackupJobLoaded()
         {
-            Assert.Catch<BackupsException>(() =>
-            {
-                var backupJob = new BackupJob(null);
-            });
-        }
+            var storage = new LocalStorage(@"Backs");
+            var fileSaver = new SplitFileSaver();
+            
+            var backupJob = new BackupJob(_archiver);
+            var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
+            var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
+            backupJob.AddJobObject(backupObject1);
+            backupJob.AddJobObject(backupObject2);
+            backupJob.CreateRestorePoint("RestorePoint1", fileSaver, storage);
+            
+            _stateService.Save(backupJob);
+            BackupJob backupJob1 = _stateService.Load();
 
-        [TearDown]
-        public void Teardown()
-        {
-            foreach (string file in Directory.GetFiles("Backs"))
-            {
-                File.Delete(file);
-            }
-            Directory.Delete("Backs");
-            foreach (string file in Directory.GetFiles("FilesToBackup"))
-            {
-                File.Delete(file);
-            }
-            Directory.Delete("FilesToBackup");
+            Assert.AreEqual(backupJob1.JobObjects.Count, backupJob.JobObjects.Count);
+            Assert.AreEqual(backupJob1.RestorePoints.Count, backupJob.RestorePoints.Count);
         }
     }
 }

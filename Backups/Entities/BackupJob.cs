@@ -5,12 +5,15 @@ using Backups.FileSaver;
 using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Entities
 {
     public class BackupJob
     {
+        [JsonProperty]
         private List<JobObject> _jobObjects;
+        [JsonProperty]
         private List<RestorePoint> _restorePoints;
 
         public BackupJob(IArchiver archiver)
@@ -20,7 +23,11 @@ namespace Backups.Entities
             _jobObjects = new List<JobObject>();
         }
 
-        private IArchiver Archiver { get; }
+        public IArchiver Archiver { get; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IReadOnlyList<JobObject> JobObjects => _jobObjects;
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IReadOnlyList<RestorePoint> RestorePoints => _restorePoints;
 
         public void AddJobObject(JobObject jobObject)
         {
@@ -57,6 +64,16 @@ namespace Backups.Entities
             fileSaver.SaveFiles(Archiver, restorePointName, storage, _jobObjects);
 
             _restorePoints.Add(new RestorePoint(restorePointName));
+        }
+
+        public void RegisterRestorePoint(RestorePoint restorePoint)
+        {
+            if (restorePoint is null)
+            {
+                throw new BackupsException("Restore point can't be null");
+            }
+
+            _restorePoints.Add(restorePoint);
         }
     }
 }
