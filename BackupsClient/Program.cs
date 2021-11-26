@@ -11,6 +11,7 @@ using Backups.Entities;
 using Backups.FileSaver;
 using Backups.Models;
 using BackupsClient.Storage;
+using BackupsExtra.Services;
 using FileInfo = System.IO.FileInfo;
 
 namespace BackupsClient
@@ -25,7 +26,9 @@ namespace BackupsClient
             var fileSaver = new SingleFileSaver();
             var archiver = new ZipArchiver();
 
-            var backupJob = new BackupJob(archiver, restorePointCounter);
+            var backupJob = new BackupJob(
+                archiver, 
+                new RestorePointDeleter(restorePointCounter));
             var backupObject1 = new JobObject(srcPath + @"FilesToBackup\lol.txt");
             var backupObject2 = new JobObject(srcPath + @"FilesToBackup\kek.txt");
             backupJob.AddJobObject(backupObject1);

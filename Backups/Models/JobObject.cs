@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Models
 {
@@ -15,8 +16,12 @@ namespace Backups.Models
             }
         }
 
+        [JsonConstructor]
+        private JobObject()
+        { }
+
         public string FileName { get; }
-        public string FilePath { get; }
+        private string FilePath { get; }
 
         public void CopyFileToStream(Stream stream)
         {

@@ -8,11 +8,15 @@ namespace Backups.Archiver
 {
     public class ZipArchiver : IArchiver
     {
-        private string _postfix;
-
+        private readonly string _postfix;
         public ZipArchiver()
         {
             _postfix = ".zip";
+        }
+
+        public string GetPostfix()
+        {
+            return _postfix;
         }
 
         public Stream Archive(IReadOnlyList<JobObject> jobObjects)

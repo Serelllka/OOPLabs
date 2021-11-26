@@ -5,6 +5,7 @@ using Backups.Entities;
 using Backups.FileSaver;
 using Backups.Models;
 using Backups.Storage;
+using Backups.Tools;
 using BackupsExtra.Configuration;
 using BackupsExtra.Services;
 using BackupsExtra.Tools;
@@ -52,7 +53,9 @@ namespace BackupsExtra.Tests
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
             
-            var backupJob = new BackupJob(_archiver, restorePointCounter);
+            var backupJob = new BackupJob(
+                _archiver,
+                new RestorePointDeleter(restorePointCounter));
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
@@ -77,7 +80,9 @@ namespace BackupsExtra.Tests
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
             
-            var backupJob = new BackupJob(_archiver, restorePointCounter);
+            var backupJob = new BackupJob(
+                _archiver, 
+                new RestorePointDeleter(restorePointCounter));
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
@@ -89,6 +94,58 @@ namespace BackupsExtra.Tests
 
             Assert.AreEqual(backupJob1.JobObjects.Count, backupJob.JobObjects.Count);
             Assert.AreEqual(backupJob1.RestorePoints.Count, backupJob.RestorePoints.Count);
+        }
+
+        [Test]
+        public void CreateRestorePointsMoreThenLimit_RestorePointsCountsEqualsLimit()
+        {
+            const int restorePointCounter = 2;
+            var storage = new LocalStorage(@"Backs");
+            var fileSaver = new SplitFileSaver();
+            
+            var backupJob = new BackupJob(
+                _archiver,
+                new RestorePointDeleter(2));
+            var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
+            var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
+            backupJob.AddJobObject(backupObject1);
+            backupJob.AddJobObject(backupObject2);
+            backupJob.CreateRestorePoint("point1", fileSaver, storage);
+            backupJob.CreateRestorePoint("point2", fileSaver, storage);
+            backupJob.CreateRestorePoint("point3", fileSaver, storage);
+            Assert.AreEqual(backupJob.RestorePoints.Count, 2);
+        }
+        
+        [Test]
+        public void CreateRestorePointsMoreThenLimit_RestorePointsCountsEqualsLimit_PointsMerged()
+        {
+            const int restorePointCounter = 2;
+            var storage = new LocalStorage(@"Backs");
+            var fileSaver = new SplitFileSaver();
+            
+            var backupJob = new BackupJob(
+                _archiver,
+                new RestorePointMerger(
+                    2,
+                    "Backs",
+                    new SplitStorageMerge()));
+            var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
+            var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
+            backupJob.AddJobObject(backupObject1);
+            backupJob.AddJobObject(backupObject2);
+            
+            backupJob.CreateRestorePoint(Path.Combine("point1", "1file"), fileSaver, storage);
+            backupJob.CreateRestorePoint(Path.Combine("point2", "2file"), fileSaver, storage);
+            backupJob.CreateRestorePoint(Path.Combine("point3", "3file"), fileSaver, storage);
+            
+            Assert.AreEqual(backupJob.RestorePoints.Count, 2);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            Directory.Delete("Backs", true);
+            Directory.Delete("FilesToBackup", true);
         }
     }
 }

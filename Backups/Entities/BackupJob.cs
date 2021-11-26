@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Backups.Archiver;
 using Backups.FileSaver;
 using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
+using BackupsExtra.Services;
 using Newtonsoft.Json;
 
 namespace Backups.Entities
@@ -16,16 +18,12 @@ namespace Backups.Entities
         [JsonProperty]
         private List<RestorePoint> _restorePoints;
         [JsonProperty]
-        private int _restorePointCounter;
+        private IRestorePointCountManager _restorePointCounter;
 
-        public BackupJob(IArchiver archiver, int restorePointCounter)
+        public BackupJob(IArchiver archiver, IRestorePointCountManager restorePointCounter)
         {
-            if (restorePointCounter == 0)
-            {
-                throw new BackupsException("restorePointsCounter must be positive");
-            }
-
-            _restorePointCounter = restorePointCounter;
+            _restorePointCounter = restorePointCounter ?? throw new BackupsException(
+                "restore point can't be null");
             Archiver = archiver ?? throw new BackupsException("archiver can't be null");
             _restorePoints = new List<RestorePoint>();
             _jobObjects = new List<JobObject>();
@@ -76,7 +74,8 @@ namespace Backups.Entities
         {
             fileSaver.SaveFiles(Archiver, restorePointName, storage, _jobObjects);
 
-            _restorePoints.Add(new RestorePoint(restorePointName));
+            _restorePoints.Add(new RestorePoint(restorePointName, Archiver.GetPostfix()));
+            _restorePointCounter.HandleOverflow(_restorePoints);
         }
 
         public void RegisterRestorePoint(RestorePoint restorePoint)
@@ -117,14 +116,6 @@ namespace Backups.Entities
             }
 
             _restorePoints.Remove(restorePoint);
-        }
-
-        private void UpdateState()
-        {
-            if (_restorePoints.Count > _restorePointCounter)
-            {
-                RemoveRestorePoint(_restorePoints[0]);
-            }
         }
     }
 }
