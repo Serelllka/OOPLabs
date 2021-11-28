@@ -11,6 +11,7 @@ using Backups.Entities;
 using Backups.FileSaver;
 using Backups.Models;
 using BackupsClient.Storage;
+using BackupsExtra.PointFilter;
 using BackupsExtra.Services;
 using FileInfo = System.IO.FileInfo;
 
@@ -23,7 +24,7 @@ namespace BackupsClient
             const int restorePointCounter = 2;
             const string srcPath = @"C:\Users\vprog\RiderProjects\Serelllka\BackupsClient\Src\";
             var storage = new WebStorage(new TcpClient("127.0.0.1", 1234));
-            var restorePointDeleter = new RestorePointDeleter(restorePointCounter);
+            var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
             var fileSaver = new SingleFileSaver();
             var archiver = new ZipArchiver();
 

@@ -1,34 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Backups.Models;
+using Backups.PointFilter;
 using Backups.Tools;
 
 namespace BackupsExtra.Services
 {
     public class RestorePointDeleter : IRestorePointCountManager
     {
-        private int _restorePointsLimit;
+        private IPointFilter _pointFilter;
 
-        public RestorePointDeleter(int limit)
+        public RestorePointDeleter(IPointFilter pointFilter)
         {
-            _restorePointsLimit = limit;
-        }
-
-        public bool IsOverflow(IReadOnlyList<RestorePoint> restorePoints)
-        {
-            if (restorePoints is null)
-            {
-                throw new BackupsException("Restore point can't be null");
-            }
-
-            return restorePoints.Count > _restorePointsLimit;
+            _pointFilter = pointFilter;
         }
 
         public void HandleOverflow(List<RestorePoint> restorePoints)
         {
-            if (IsOverflow(restorePoints))
-            {
-                restorePoints.Remove(restorePoints[0]);
-            }
+            IReadOnlyList<RestorePoint> obtainedList = _pointFilter.Filter(restorePoints);
+            restorePoints.RemoveAll(item => !obtainedList.Contains(item));
         }
     }
 }

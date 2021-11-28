@@ -6,7 +6,7 @@ namespace Backups.Tools
     public interface IMergeMethod
     {
         void Merge(
-            string restorePointPath,
-            List<RestorePoint> restorePoints);
+            RestorePoint sourcePoint,
+            RestorePoint destPoint);
     }
 }

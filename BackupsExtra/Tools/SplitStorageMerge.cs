@@ -7,22 +7,17 @@ namespace Backups.Tools
     public class SplitStorageMerge : IMergeMethod
     {
         public void Merge(
-            string restorePointPath,
-            List<RestorePoint> restorePoints)
+            RestorePoint sourcePoint,
+            RestorePoint destPoint)
         {
             foreach (string file in Directory.GetFiles(
-                Path.Combine(
-                    restorePointPath,
-                    Path.GetDirectoryName(restorePoints[0].PointPath) ?? string.Empty)))
+                Path.Combine(Path.GetDirectoryName(sourcePoint.PointPath) ?? string.Empty)))
             {
                 string path = Path.Combine(
-                    restorePointPath,
-                    Path.GetDirectoryName(restorePoints[1].PointPath) ?? string.Empty,
+                    Path.GetDirectoryName(destPoint.PointPath) ?? string.Empty,
                     Path.GetFileName(file));
                 File.Copy(file, path);
             }
-
-            restorePoints.Remove(restorePoints[0]);
         }
     }
 }

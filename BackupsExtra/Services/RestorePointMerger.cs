@@ -1,41 +1,42 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Backups.Models;
+using Backups.PointFilter;
 using Backups.Tools;
 
 namespace BackupsExtra.Services
 {
     public class RestorePointMerger : IRestorePointCountManager
     {
-        private readonly int _restorePointsLimit;
+        private readonly IPointFilter _pointFilter;
         private readonly IMergeMethod _mergeMethod;
         private readonly string _restorePointPath;
 
-        public RestorePointMerger(int restorePointsLimit, string pointPath, IMergeMethod mergeMethod)
+        public RestorePointMerger(IPointFilter pointFilter, string pointPath, IMergeMethod mergeMethod)
         {
             _restorePointPath = pointPath;
-            _restorePointsLimit = restorePointsLimit;
+            _pointFilter = pointFilter;
             _mergeMethod = mergeMethod;
-        }
-
-        public bool IsOverflow(IReadOnlyList<RestorePoint> restorePoints)
-        {
-            if (restorePoints is null)
-            {
-                throw new BackupsException("Restore point can't be null");
-            }
-
-            return restorePoints.Count > _restorePointsLimit;
         }
 
         public void HandleOverflow(List<RestorePoint> restorePoints)
         {
-            if (IsOverflow(restorePoints))
+            IReadOnlyList<RestorePoint> filteredList = _pointFilter.Filter(restorePoints);
+            if (filteredList.Count == 0)
             {
-                _mergeMethod.Merge(
-                    _restorePointPath,
-                    restorePoints);
+                throw new BackupsException("RestorePoint list can't be empty");
             }
+
+            RestorePoint firstObtainedObject = filteredList[0];
+            foreach (RestorePoint restorePoint in restorePoints)
+            {
+                if (!filteredList.Contains(restorePoint))
+                {
+                    _mergeMethod.Merge(restorePoint, firstObtainedObject);
+                }
+            }
+
+            restorePoints.RemoveAll(item => !filteredList.Contains(item));
         }
     }
 }

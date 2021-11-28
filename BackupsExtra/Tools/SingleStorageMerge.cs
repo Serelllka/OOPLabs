@@ -6,10 +6,9 @@ namespace Backups.Tools
     public class SingleStorageMerge : IMergeMethod
     {
         public void Merge(
-            string restorePointPath,
-            List<RestorePoint> restorePoints)
+            RestorePoint sourcePoint,
+            RestorePoint destPoint)
         {
-            restorePoints.Remove(restorePoints[0]);
         }
     }
 }

@@ -19,7 +19,9 @@ namespace Backups.FileSaver
             foreach (JobObject jobObject in jobObjects)
             {
                 using Stream stream = archiver.Archive(jobObject);
+                stream.Position = 0;
                 using var memoryStream = new MemoryStream();
+
                 stream.CopyTo(memoryStream);
                 storage.SaveFromByteArray(
                     archiver.GetArchiveNameFromFileName(archivePath + counter),

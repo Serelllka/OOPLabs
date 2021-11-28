@@ -85,7 +85,9 @@ namespace Backups.Entities
         {
             _fileSaver.SaveFiles(Archiver, restorePointName, _storage, _jobObjects);
 
-            _restorePoints.Add(new RestorePoint(restorePointName, Archiver.GetPostfix()));
+            _restorePoints.Add(new RestorePoint(
+                Path.Combine(_storage.GetFolderPath(), restorePointName),
+                Archiver));
             _restorePointCounter.HandleOverflow(_restorePoints);
         }
 

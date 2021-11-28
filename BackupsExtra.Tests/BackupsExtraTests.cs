@@ -7,6 +7,7 @@ using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
 using BackupsExtra.Configuration;
+using BackupsExtra.PointFilter;
 using BackupsExtra.Services;
 using BackupsExtra.Tools;
 using Newtonsoft.Json;
@@ -52,7 +53,7 @@ namespace BackupsExtra.Tests
             const int restorePointCounter = 2;
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
-            var restorePointDeleter = new RestorePointDeleter(restorePointCounter);
+            var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
             
             var backupJob = new BackupJob(
                 _archiver,
@@ -82,7 +83,7 @@ namespace BackupsExtra.Tests
             const int restorePointCounter = 2;
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
-            var restorePointDeleter = new RestorePointDeleter(restorePointCounter);
+            var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
             
             var backupJob = new BackupJob(
                 _archiver, 
@@ -93,7 +94,7 @@ namespace BackupsExtra.Tests
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
             backupJob.AddJobObject(backupObject2);
-            backupJob.CreateRestorePoint("RestorePoint1");
+            backupJob.CreateRestorePoint(Path.Combine("RestorePoint1", "1file"));
             
             _stateService.Save(backupJob);
             BackupJob backupJob1 = _stateService.Load();
@@ -108,7 +109,7 @@ namespace BackupsExtra.Tests
             const int restorePointCounter = 2;
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
-            var restorePointDeleter = new RestorePointDeleter(restorePointCounter);
+            var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
             
             var backupJob = new BackupJob(
                 _archiver,
@@ -119,9 +120,9 @@ namespace BackupsExtra.Tests
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
             backupJob.AddJobObject(backupObject2);
-            backupJob.CreateRestorePoint("point1");
-            backupJob.CreateRestorePoint("point2");
-            backupJob.CreateRestorePoint("point3");
+            backupJob.CreateRestorePoint(Path.Combine("point21", "1file"));
+            backupJob.CreateRestorePoint(Path.Combine("point22", "2file"));
+            backupJob.CreateRestorePoint(Path.Combine("point23", "3file"));
             Assert.AreEqual(backupJob.RestorePoints.Count, 2);
         }
         
@@ -132,7 +133,7 @@ namespace BackupsExtra.Tests
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
             var restorePointMerger = new RestorePointMerger(
-                restorePointCounter,
+                new FilterByCount(restorePointCounter),
                 "Backs",
                 new SplitStorageMerge());
             
@@ -152,7 +153,7 @@ namespace BackupsExtra.Tests
             
             Assert.AreEqual(backupJob.RestorePoints.Count, 2);
         }
-
+        
         [TearDown]
         public void TearDown()
         {

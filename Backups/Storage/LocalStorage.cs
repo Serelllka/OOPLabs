@@ -23,6 +23,8 @@ namespace Backups.Storage
         {
         }
 
+        public string StoragePath { get; }
+
         public void SaveFromByteArray(string archivePath, byte[] bytes)
         {
             if (!Directory.Exists(Path.GetDirectoryName(Path.Combine(_storagePath, archivePath))))
@@ -35,5 +37,10 @@ namespace Backups.Storage
             using var memoryStream = new MemoryStream(bytes);
             memoryStream.CopyTo(fileStream);
             }
+
+        public string GetFolderPath()
+        {
+            return _storagePath;
+        }
     }
 }

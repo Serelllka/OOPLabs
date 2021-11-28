@@ -6,6 +6,7 @@ using Backups.FileSaver;
 using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
+using BackupsExtra.PointFilter;
 using BackupsExtra.Services;
 using NUnit.Framework;
 
@@ -45,7 +46,7 @@ namespace Backups.Tests
                 _archiver,
                 fileSaver,
                 storage,
-                new RestorePointDeleter(restorePointCounter));
+                new RestorePointDeleter(new FilterByCount(restorePointCounter)));
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
@@ -69,7 +70,7 @@ namespace Backups.Tests
             const int restorePointCounter = 2;
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
-            var restorePointDeleter = new RestorePointDeleter(restorePointCounter);
+            var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
 
             Assert.Catch<BackupsException>(() =>
             {
