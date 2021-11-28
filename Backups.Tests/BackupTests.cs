@@ -43,20 +43,22 @@ namespace Backups.Tests
 
             var backupJob = new BackupJob(
                 _archiver,
+                fileSaver,
+                storage,
                 new RestorePointDeleter(restorePointCounter));
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
             backupJob.AddJobObject(backupObject2);
             
-            backupJob.CreateRestorePoint(Path.Combine("RestorePoint1", "file"), fileSaver, storage);
+            backupJob.CreateRestorePoint(Path.Combine("RestorePoint1", "file"));
             
             var backupObject3 = new JobObject(Path.Combine("FilesToBackup","test3.txt"));
             backupJob.AddJobObject(backupObject3);
-            backupJob.CreateRestorePoint(Path.Combine("RestorePoint2", "file"), fileSaver, storage);
+            backupJob.CreateRestorePoint(Path.Combine("RestorePoint2", "file"));
             
             backupJob.RemoveJobObject(backupObject3);
-            backupJob.CreateRestorePoint(Path.Combine("RestorePoint3", "file"), fileSaver, storage);
+            backupJob.CreateRestorePoint(Path.Combine("RestorePoint3", "file"));
             
             Assert.True(File.Exists(Path.Combine("Backs",Path.Combine("RestorePoint1", "file1.zip"))));
         }
@@ -65,15 +67,47 @@ namespace Backups.Tests
         public void CreateJobObjectWithNonExistingArchiver_ThrowsException()
         {
             const int restorePointCounter = 2;
-            
+            var storage = new LocalStorage(@"Backs");
+            var fileSaver = new SplitFileSaver();
+            var restorePointDeleter = new RestorePointDeleter(restorePointCounter);
+
             Assert.Catch<BackupsException>(() =>
             {
                 var backupJob = new BackupJob(
                     null, 
-                    new RestorePointDeleter(restorePointCounter));
+                    fileSaver,
+                    storage,
+                    restorePointDeleter);
+            });
+
+            Assert.Catch<BackupsException>(() =>
+            {
+                var backupJob = new BackupJob(
+                    _archiver, 
+                    null,
+                    storage,
+                    restorePointDeleter);
+            });
+            
+            Assert.Catch<BackupsException>(() =>
+            {
+                var backupJob = new BackupJob(
+                    _archiver, 
+                    fileSaver,
+                    null,
+                    restorePointDeleter);
+            });
+            
+            Assert.Catch<BackupsException>(() =>
+            {
+                var backupJob = new BackupJob(
+                    _archiver, 
+                    fileSaver,
+                    storage,
+                    null);
             });
         }
-
+        
         [Test]
         public void TriesCreateJobObjectWithNonExistingFile_ThrowsException()
         {

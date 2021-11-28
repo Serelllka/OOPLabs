@@ -23,25 +23,28 @@ namespace BackupsClient
             const int restorePointCounter = 2;
             const string srcPath = @"C:\Users\vprog\RiderProjects\Serelllka\BackupsClient\Src\";
             var storage = new WebStorage(new TcpClient("127.0.0.1", 1234));
+            var restorePointDeleter = new RestorePointDeleter(restorePointCounter);
             var fileSaver = new SingleFileSaver();
             var archiver = new ZipArchiver();
 
             var backupJob = new BackupJob(
-                archiver, 
-                new RestorePointDeleter(restorePointCounter));
+                archiver,
+                fileSaver,
+                storage,
+                restorePointDeleter);
             var backupObject1 = new JobObject(srcPath + @"FilesToBackup\lol.txt");
             var backupObject2 = new JobObject(srcPath + @"FilesToBackup\kek.txt");
             backupJob.AddJobObject(backupObject1);
             backupJob.AddJobObject(backupObject2);
             
-            backupJob.CreateRestorePoint("RestorePoint1.zip", fileSaver, storage);
+            backupJob.CreateRestorePoint("RestorePoint1.zip");
             
             var backupObject3 = new JobObject(srcPath + @"FilesToBackup\cheburek.txt");
             backupJob.AddJobObject(backupObject3);
-            backupJob.CreateRestorePoint("RestorePoint2.zip", fileSaver, storage);
+            backupJob.CreateRestorePoint("RestorePoint2.zip");
             
             backupJob.RemoveJobObject(backupObject3);
-            backupJob.CreateRestorePoint("RestorePoint3.zip", fileSaver, storage);
+            backupJob.CreateRestorePoint("RestorePoint3.zip");
             
         }  
     }  

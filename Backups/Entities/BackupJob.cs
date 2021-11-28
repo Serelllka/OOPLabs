@@ -19,12 +19,23 @@ namespace Backups.Entities
         private List<RestorePoint> _restorePoints;
         [JsonProperty]
         private IRestorePointCountManager _restorePointCounter;
+        [JsonProperty]
+        private IStorage _storage;
+        [JsonProperty]
+        private IFileSaver _fileSaver;
 
-        public BackupJob(IArchiver archiver, IRestorePointCountManager restorePointCounter)
+        public BackupJob(
+            IArchiver archiver,
+            IFileSaver fileSaver,
+            IStorage storage,
+            IRestorePointCountManager restorePointCounter)
         {
             _restorePointCounter = restorePointCounter ?? throw new BackupsException(
                 "restore point can't be null");
+            _storage = storage ?? throw new BackupsException("storage can't be null");
+            _fileSaver = fileSaver ?? throw new BackupsException("fileSaver can't be null");
             Archiver = archiver ?? throw new BackupsException("archiver can't be null");
+
             _restorePoints = new List<RestorePoint>();
             _jobObjects = new List<JobObject>();
         }
@@ -70,9 +81,9 @@ namespace Backups.Entities
             _jobObjects.Remove(jobObject);
         }
 
-        public void CreateRestorePoint(string restorePointName, IFileSaver fileSaver, IStorage storage)
+        public void CreateRestorePoint(string restorePointName)
         {
-            fileSaver.SaveFiles(Archiver, restorePointName, storage, _jobObjects);
+            _fileSaver.SaveFiles(Archiver, restorePointName, _storage, _jobObjects);
 
             _restorePoints.Add(new RestorePoint(restorePointName, Archiver.GetPostfix()));
             _restorePointCounter.HandleOverflow(_restorePoints);
