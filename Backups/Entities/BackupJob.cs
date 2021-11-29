@@ -24,6 +24,8 @@ namespace Backups.Entities
         private IStorage _storage;
         [JsonProperty]
         private IFileSaver _fileSaver;
+        [JsonProperty]
+        private ILogger _logger;
 
         public BackupJob(
             IArchiver archiver,
@@ -32,6 +34,7 @@ namespace Backups.Entities
             IRestorePointCountManager restorePointCounter,
             ILogger logger)
         {
+            _logger = logger ?? throw new BackupsException("logger can't be null");
             _restorePointCounter = restorePointCounter ?? throw new BackupsException(
                 "restore point can't be null");
             _storage = storage ?? throw new BackupsException("storage can't be null");
@@ -55,6 +58,7 @@ namespace Backups.Entities
 
         public void AddJobObject(JobObject jobObject)
         {
+            _logger.Log("new JobObject added");
             if (jobObject is null)
             {
                 throw new BackupsException("jobObject doesn't exist");
@@ -70,6 +74,7 @@ namespace Backups.Entities
 
         public void RemoveJobObject(JobObject jobObject)
         {
+            _logger.Log("JobObject deleted");
             if (jobObject is null)
             {
                 throw new BackupsException("jobObject doesn't exist");
@@ -85,6 +90,7 @@ namespace Backups.Entities
 
         public void CreateRestorePoint(string restorePointName)
         {
+            _logger.Log("new RestorePoint created");
             _fileSaver.SaveFiles(Archiver, restorePointName, _storage, _jobObjects);
 
             _restorePoints.Add(new RestorePoint(

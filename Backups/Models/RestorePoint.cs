@@ -16,6 +16,7 @@ namespace Backups.Models
         }
 
         public DateTime CreationDate { get; }
+        public IArchiver Archiver => _archiver;
         public string PointPath { get; }
         public string PointName { get; }
     }
