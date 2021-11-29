@@ -28,5 +28,10 @@ namespace BackupsClient.Storage
             _client.GetStream().Write(BitConverter.GetBytes(data.Length));
             _client.GetStream().Write(data);
         }
+
+        public string GetFolderPath()
+        {
+            return "";
+        }
     }
 }

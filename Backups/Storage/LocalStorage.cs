@@ -1,18 +1,15 @@
 ﻿using System.IO;
 using Backups.Tools;
+using Newtonsoft.Json;
 
 namespace Backups.Storage
 {
     public class LocalStorage : IStorage
     {
+        [JsonProperty]
         private string _storagePath;
         public LocalStorage(string storagePath)
         {
-            if (storagePath is null)
-            {
-                throw new BackupsException("storage path can't be null");
-            }
-
             if (!Directory.Exists(storagePath))
             {
                 throw new BackupsException("This directory is not exists");
@@ -21,11 +18,29 @@ namespace Backups.Storage
             _storagePath = storagePath;
         }
 
+        [JsonConstructor]
+        private LocalStorage()
+        {
+        }
+
+        public string StoragePath { get; }
+
         public void SaveFromByteArray(string archivePath, byte[] bytes)
         {
+            if (!Directory.Exists(Path.GetDirectoryName(Path.Combine(_storagePath, archivePath))))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(
+                    Path.Combine(_storagePath, archivePath)) ?? string.Empty);
+            }
+
             using FileStream fileStream = File.Create(Path.Combine(_storagePath, archivePath));
             using var memoryStream = new MemoryStream(bytes);
             memoryStream.CopyTo(fileStream);
             }
+
+        public string GetFolderPath()
+        {
+            return _storagePath;
+        }
     }
 }

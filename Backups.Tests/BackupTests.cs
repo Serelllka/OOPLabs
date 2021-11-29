@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using Backups.Archiver;
 using Backups.Entities;
@@ -7,6 +6,9 @@ using Backups.FileSaver;
 using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
+using BackupsExtra.Logger;
+using BackupsExtra.PointFilter;
+using BackupsExtra.Services;
 using NUnit.Framework;
 
 namespace Backups.Tests
@@ -37,49 +39,97 @@ namespace Backups.Tests
         [Test]
         public void CreateBackupJobCreateJobCreateRestorePoint_CheckFilesForExisting()
         {
+            const int restorePointCounter = 2;
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
-            
-            var backupJob = new BackupJob(_archiver);
+
+            var backupJob = new BackupJob(
+                _archiver,
+                fileSaver,
+                storage,
+                new RestorePointDeleter(new FilterByCount(restorePointCounter)),
+                new FileLogger("logger.log"));
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
             backupJob.AddJobObject(backupObject2);
             
-            backupJob.CreateRestorePoint("RestorePoint1", fileSaver, storage);
+            backupJob.CreateRestorePoint(Path.Combine("RestorePoint1", "file"));
             
             var backupObject3 = new JobObject(Path.Combine("FilesToBackup","test3.txt"));
             backupJob.AddJobObject(backupObject3);
-            backupJob.CreateRestorePoint("RestorePoint2", fileSaver, storage);
+            backupJob.CreateRestorePoint(Path.Combine("RestorePoint2", "file"));
             
             backupJob.RemoveJobObject(backupObject3);
-            backupJob.CreateRestorePoint("RestorePoint3", fileSaver, storage);
+            backupJob.CreateRestorePoint(Path.Combine("RestorePoint3", "file"));
             
-            Assert.True(File.Exists(Path.Combine("Backs","RestorePoint11.zip")));
+            Assert.True(File.Exists(Path.Combine("Backs",Path.Combine("RestorePoint1", "file1.zip"))));
         }
 
         [Test]
         public void CreateJobObjectWithNonExistingArchiver_ThrowsException()
         {
+            const int restorePointCounter = 2;
+            var storage = new LocalStorage(@"Backs");
+            var fileSaver = new SplitFileSaver();
+            var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
+            var logger = new FileLogger("logger.log");
+            
             Assert.Catch<BackupsException>(() =>
             {
-                var backupJob = new BackupJob(null);
+                var backupJob = new BackupJob(
+                    null, 
+                    fileSaver,
+                    storage,
+                    restorePointDeleter,
+                    logger);
+            });
+
+            Assert.Catch<BackupsException>(() =>
+            {
+                var backupJob = new BackupJob(
+                    _archiver, 
+                    null,
+                    storage,
+                    restorePointDeleter,
+                    logger);
+            });
+            
+            Assert.Catch<BackupsException>(() =>
+            {
+                var backupJob = new BackupJob(
+                    _archiver, 
+                    fileSaver,
+                    null,
+                    restorePointDeleter,
+                    logger);
+            });
+            
+            Assert.Catch<BackupsException>(() =>
+            {
+                var backupJob = new BackupJob(
+                    _archiver, 
+                    fileSaver,
+                    storage,
+                    null,
+                    logger);
             });
         }
-
-        [TearDown]
-        public void Teardown()
+        
+        [Test]
+        public void TriesCreateJobObjectWithNonExistingFile_ThrowsException()
         {
-            foreach (string file in Directory.GetFiles("Backs"))
+            Assert.Catch<BackupsException>(() =>
             {
-                File.Delete(file);
-            }
-            Directory.Delete("Backs");
-            foreach (string file in Directory.GetFiles("FilesToBackup"))
-            {
-                File.Delete(file);
-            }
-            Directory.Delete("FilesToBackup");
+                var backupObject1 = new JobObject(Path.Combine("FilesToBackup", "aboba.txt"));
+            });
+        }
+        
+        [TearDown]
+        public void TearDown()
+        {
+            Directory.Delete("Backs", true);
+            Directory.Delete("FilesToBackup", true);
         }
     }
 }
