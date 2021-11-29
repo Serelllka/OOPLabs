@@ -6,6 +6,7 @@ using Backups.FileSaver;
 using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
+using BackupsExtra.Logger;
 using BackupsExtra.PointFilter;
 using BackupsExtra.Services;
 using NUnit.Framework;
@@ -46,7 +47,8 @@ namespace Backups.Tests
                 _archiver,
                 fileSaver,
                 storage,
-                new RestorePointDeleter(new FilterByCount(restorePointCounter)));
+                new RestorePointDeleter(new FilterByCount(restorePointCounter)),
+                new FileLogger("logger.log"));
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
@@ -71,14 +73,16 @@ namespace Backups.Tests
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
             var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
-
+            var logger = new FileLogger("logger.log");
+            
             Assert.Catch<BackupsException>(() =>
             {
                 var backupJob = new BackupJob(
                     null, 
                     fileSaver,
                     storage,
-                    restorePointDeleter);
+                    restorePointDeleter,
+                    logger);
             });
 
             Assert.Catch<BackupsException>(() =>
@@ -87,7 +91,8 @@ namespace Backups.Tests
                     _archiver, 
                     null,
                     storage,
-                    restorePointDeleter);
+                    restorePointDeleter,
+                    logger);
             });
             
             Assert.Catch<BackupsException>(() =>
@@ -96,7 +101,8 @@ namespace Backups.Tests
                     _archiver, 
                     fileSaver,
                     null,
-                    restorePointDeleter);
+                    restorePointDeleter,
+                    logger);
             });
             
             Assert.Catch<BackupsException>(() =>
@@ -105,7 +111,8 @@ namespace Backups.Tests
                     _archiver, 
                     fileSaver,
                     storage,
-                    null);
+                    null,
+                    logger);
             });
         }
         

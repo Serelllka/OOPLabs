@@ -11,6 +11,7 @@ using Backups.Entities;
 using Backups.FileSaver;
 using Backups.Models;
 using BackupsClient.Storage;
+using BackupsExtra.Logger;
 using BackupsExtra.PointFilter;
 using BackupsExtra.Services;
 using FileInfo = System.IO.FileInfo;
@@ -27,12 +28,14 @@ namespace BackupsClient
             var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
             var fileSaver = new SingleFileSaver();
             var archiver = new ZipArchiver();
-
+            var logger = new FileLogger("logger.log");    
+            
             var backupJob = new BackupJob(
                 archiver,
                 fileSaver,
                 storage,
-                restorePointDeleter);
+                restorePointDeleter,
+                logger);
             var backupObject1 = new JobObject(srcPath + @"FilesToBackup\lol.txt");
             var backupObject2 = new JobObject(srcPath + @"FilesToBackup\kek.txt");
             backupJob.AddJobObject(backupObject1);

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Backups.Archiver;
 using Backups.FileSaver;
+using Backups.Logger;
 using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
@@ -28,7 +29,8 @@ namespace Backups.Entities
             IArchiver archiver,
             IFileSaver fileSaver,
             IStorage storage,
-            IRestorePointCountManager restorePointCounter)
+            IRestorePointCountManager restorePointCounter,
+            ILogger logger)
         {
             _restorePointCounter = restorePointCounter ?? throw new BackupsException(
                 "restore point can't be null");

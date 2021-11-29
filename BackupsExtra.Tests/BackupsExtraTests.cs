@@ -7,6 +7,7 @@ using Backups.Models;
 using Backups.Storage;
 using Backups.Tools;
 using BackupsExtra.Configuration;
+using BackupsExtra.Logger;
 using BackupsExtra.PointFilter;
 using BackupsExtra.Services;
 using BackupsExtra.Tools;
@@ -54,12 +55,14 @@ namespace BackupsExtra.Tests
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
             var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
+            var logger = new FileLogger("logger.log");
             
             var backupJob = new BackupJob(
                 _archiver,
                 fileSaver,
                 storage,
-                restorePointDeleter);
+                restorePointDeleter,
+                logger);
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
@@ -84,12 +87,14 @@ namespace BackupsExtra.Tests
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
             var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
+            var logger = new FileLogger("logger.log");
             
             var backupJob = new BackupJob(
                 _archiver, 
                 fileSaver,
                 storage,
-                restorePointDeleter);
+                restorePointDeleter,
+                logger);
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
@@ -110,12 +115,14 @@ namespace BackupsExtra.Tests
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
             var restorePointDeleter = new RestorePointDeleter(new FilterByCount(restorePointCounter));
+            var logger = new FileLogger("logger.log");
             
             var backupJob = new BackupJob(
                 _archiver,
                 fileSaver,
                 storage,
-                restorePointDeleter);
+                restorePointDeleter,
+                logger);
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
@@ -132,6 +139,7 @@ namespace BackupsExtra.Tests
             const int restorePointCounter = 2;
             var storage = new LocalStorage(@"Backs");
             var fileSaver = new SplitFileSaver();
+            var logger = new FileLogger("logger.log");
             var restorePointMerger = new RestorePointMerger(
                 new FilterByCount(restorePointCounter),
                 "Backs",
@@ -141,7 +149,8 @@ namespace BackupsExtra.Tests
                 _archiver,
                 fileSaver,
                 storage,
-                restorePointMerger);
+                restorePointMerger,
+                logger);
             var backupObject1 = new JobObject(Path.Combine("FilesToBackup","test1.txt"));
             var backupObject2 = new JobObject(Path.Combine("FilesToBackup","test2.txt"));
             backupJob.AddJobObject(backupObject1);
