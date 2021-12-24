@@ -13,6 +13,8 @@ namespace Reports.Server.Services
 
         Task<Employee> FindById(Guid id);
 
+        Task<Employee> AddSubordinate(Guid chiefId, Guid employeeId);
+
         Task<IEnumerable<Employee>> GetAll();
 
         void Delete(Guid id);

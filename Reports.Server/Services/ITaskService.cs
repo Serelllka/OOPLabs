@@ -12,6 +12,11 @@ namespace Reports.Server.Services
         Task<TaskModel> UpdateTaskEmployee(Guid taskId, Guid employeeId);
         Task<TaskModel> UpdateTaskChanges(Guid taskId, string content);
         Task<TaskModel> CloseTask(Guid taskId);
+        Task<IEnumerable<TaskModel>> FindByAssignedEmployee(Guid employeeId);
+        Task<IEnumerable<TaskModel>> FindByEditors(Guid employeeId);
+        Task<IEnumerable<TaskModel>> AllTaskOfSubs(Guid employeeId);
         Task<IEnumerable<TaskModel>> GetAll();
+        Task<IEnumerable<TaskModel>> GetAllClosed();
+        Task<IEnumerable<TaskModel>> GetAllOpened();
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Reports.DAL.Entities;
+using Reports.DAL.Tools;
 using Reports.Server.Controllers;
 using Reports.Server.Database;
 
@@ -41,6 +42,28 @@ namespace Reports.Server.Services
             return await _context.Employees.FindAsync(id);
         }
 
+        public async Task<Employee> AddSubordinate(Guid chiefId, Guid employeeId)
+        {
+            Employee chief = await _context.Employees.FindAsync(chiefId);
+            Employee employee = await _context.Employees.FindAsync(employeeId);
+            if (chief is null)
+            {
+                throw new ReportException("chief with this id doesn't exists");
+            }
+            if (employee is null)
+            {
+                throw new ReportException("employee with this id doesn't exists");
+            }
+            if (employee.GetListOfAllSubordinates().Contains(chief))
+            {
+                throw new ReportException("employee can't be chief of himself");
+            }
+            chief.AddSubordinate(employee);
+            _context.Employees.Update(chief);
+            await _context.SaveChangesAsync();
+            return chief;
+        }
+
         public async Task<IEnumerable<Employee>> GetAll()
         {
             return await _context.Employees.ToListAsync();
@@ -48,14 +71,16 @@ namespace Reports.Server.Services
 
         public async void Delete(Guid id)
         {
-            var employee = await _context.Employees.FindAsync(id);
+            Employee employee = await _context.Employees.FindAsync(id);
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
         }
 
         public Employee Update(Employee entity)
         {
-            throw new NotImplementedException();
+            _context.Employees.Update(entity);
+            _context.SaveChanges();
+            return entity;
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Reports.DAL.Tools;
 
 namespace Reports.DAL.Entities
 {
     public class Employee
     {
-        private List<Employee> _subordinates;
+        private readonly List<Employee> _subordinates;
         
         private Employee()
         {
@@ -28,17 +29,35 @@ namespace Reports.DAL.Entities
             Name = name;
             _subordinates = new List<Employee>();
         }
+        
+        public Guid Id { get; private init; }
+        public string Name { get; private init; }
 
         public void AddSubordinate(Employee subordinate)
         {
             if (this == subordinate)
             {
-                throw new TaskException("Employee cannot be subordinate to himself");
+                throw new ReportException("Employee cannot be subordinate to himself");
             }
             _subordinates.Add(subordinate);
         }
-        
-        public Guid Id { get; private init; }
-        public string Name { get; private init; }
+
+        public List<Employee> GetListOfAllSubordinates()
+        {
+            var allSubs = new List<Employee>();
+            allSubs.AddRange(_subordinates);
+            foreach (Employee sub in _subordinates)
+            {
+                allSubs.AddRange(sub.GetListOfAllSubordinates());
+            }
+
+            return allSubs;
+        }
+
+        public bool IsSubordinate(Employee employee)
+        {
+            return _subordinates.Contains(employee) ||
+                   _subordinates.Any(item => item.IsSubordinate(employee));
+        }
     }
 }

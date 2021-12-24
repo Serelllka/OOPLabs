@@ -52,5 +52,10 @@ namespace Reports.DAL.Entities
                 _changes.Add(newEntry);   
             }
         }
+
+        public bool MadeChanges(Employee employee)
+        {
+            return _changes.Exists(item => item.Author == employee);
+        }
     }
 }

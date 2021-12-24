@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Reports.DAL.Entities;
 using Reports.Server.Database;
 
@@ -17,7 +20,7 @@ namespace Reports.Server.Services
         public async Task<Report> Create(
             Guid taskId, DateTime resolveDate)
         {
-            var task = await _context.Tasks.FindAsync(taskId);
+            TaskModel task = await _context.Tasks.FindAsync(taskId);
             var report = new Report(Guid.NewGuid(), resolveDate, task);
             await _context.Reports.AddAsync(report);
             await _context.SaveChangesAsync();
@@ -27,6 +30,11 @@ namespace Reports.Server.Services
         public async Task<Report> FindById(Guid id)
         {
             return await _context.Reports.FindAsync(id);
+        }
+
+        public async Task<IEnumerable<Report>> GetAll()
+        {
+            return await _context.Reports.ToListAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Reports.DAL.DTO;
@@ -30,13 +31,26 @@ namespace Reports.Server.Controllers
         [Route("findId")]
         public async Task<IActionResult> FindById([FromQuery] Guid id)
         {
-            var item = await _reportService.FindById(id);
+            Report item = await _reportService.FindById(id);
             if (item is null)
             {
                 return NotFound();
             }
 
             return Ok(item);
+        }
+
+        [HttpGet]
+        [Route("getAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            IEnumerable<Report> result = await _reportService.GetAll();
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Reports.DAL.Entities;
@@ -33,10 +34,50 @@ namespace Reports.Server.Services
             return await _context.Tasks.FindAsync(id);
         }
 
+        public async Task<IEnumerable<TaskModel>> FindByAssignedEmployee(Guid employeeId)
+        {
+            Employee employee = await _context.Employees.FindAsync(employeeId);
+            IEnumerable<TaskModel> allTasks = await GetAllOpened();
+
+            if (employee is null)
+            {
+                throw new ReportException("this employee is not exists");
+            }
+
+            return allTasks.Where(item => item.AssignedEmployee == employee);
+        }
+
+        public async Task<IEnumerable<TaskModel>> FindByEditors(Guid employeeId)
+        {
+            Employee employee = await _context.Employees.FindAsync(employeeId);
+            IEnumerable<TaskModel> allTasks = await GetAllOpened();
+
+            if (employee is null)
+            {
+                throw new ReportException("this employee is not exists");
+            }
+
+            return allTasks.Where(item => item.MadeChanges(employee));
+        }
+
+        public async Task<IEnumerable<TaskModel>> AllTaskOfSubs(Guid employeeId)
+        {
+            Employee employee = await _context.Employees.FindAsync(employeeId);
+            IEnumerable<TaskModel> allTasks = await GetAllOpened();
+
+            if (employee is null)
+            {
+                throw new ReportException("this employee is not exists");
+            }
+
+            return allTasks.Where(item => 
+                employee.IsSubordinate(item.AssignedEmployee));
+        }
+
         public async Task<TaskModel> UpdateTaskEmployee(Guid taskId, Guid employeeId)
         {
-            var task = await _context.Tasks.FindAsync(taskId);
-            var employee = await _context.Employees.FindAsync(employeeId);
+            TaskModel task = await _context.Tasks.FindAsync(taskId);
+            Employee employee = await _context.Employees.FindAsync(employeeId);
             task.UpdateAssignedEmployee(employee);
             _context.Tasks.Update(task);
             await _context.SaveChangesAsync();
@@ -45,7 +86,7 @@ namespace Reports.Server.Services
 
         public async Task<TaskModel> UpdateTaskChanges(Guid taskId, string content)
         {
-            var task = await _context.Tasks.FindAsync(taskId);
+            TaskModel task = await _context.Tasks.FindAsync(taskId);
             var entry = new Entry(Guid.NewGuid(), task.AssignedEmployee, content);
             if (task.State == TaskState.Closed)
             {
@@ -60,7 +101,7 @@ namespace Reports.Server.Services
 
         public async Task<TaskModel> CloseTask(Guid taskId)
         {
-            var task = await FindById(taskId);
+            TaskModel task = await FindById(taskId);
             task.CloseTask();
             _context.Tasks.Update(task);
             await _context.SaveChangesAsync();
@@ -70,6 +111,18 @@ namespace Reports.Server.Services
         public async Task<IEnumerable<TaskModel>> GetAll()
         {
             return await _context.Tasks.ToListAsync();
+        }
+
+        public async Task<IEnumerable<TaskModel>> GetAllClosed()
+        {
+            List<TaskModel> tasks = await _context.Tasks.ToListAsync();
+            return tasks.Where(item => item.State == TaskState.Closed).ToList();
+        }
+
+        public async Task<IEnumerable<TaskModel>> GetAllOpened()
+        {
+            List<TaskModel> tasks = await _context.Tasks.ToListAsync();
+            return tasks.Where(item => item.State == TaskState.Ready).ToList();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace Reports.Server.Controllers
         public async Task<IActionResult> FindByName([FromQuery] string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return StatusCode((int)HttpStatusCode.BadRequest);
-            var result = await _service.FindByName(name);
+            IEnumerable<Employee> result = await _service.FindByName(name);
             if (result != null)
             {
                 return Ok(result);
@@ -46,7 +47,7 @@ namespace Reports.Server.Controllers
         public async Task<IActionResult> FindById([FromQuery] Guid id)
         {
             if (id == Guid.Empty) return StatusCode((int)HttpStatusCode.BadRequest);
-            var result = await _service.FindById(id);
+            Employee result = await _service.FindById(id);
             if (result != null)
             {
                 return Ok(result);
@@ -59,7 +60,7 @@ namespace Reports.Server.Controllers
         [Route("getAll")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _service.GetAll();
+            IEnumerable<Employee> result = await _service.GetAll();
             if (result != null)
             {
                 return Ok(result);
@@ -67,7 +68,7 @@ namespace Reports.Server.Controllers
 
             return NotFound();
         }
-        
+
         [HttpPatch]
         [Route("AddSubordinate")]
         public async Task<IActionResult> SetNewChief(
@@ -75,17 +76,14 @@ namespace Reports.Server.Controllers
             [FromQuery] Guid employeeId
             )
         {
-            var chief = await _service.FindById(chiefId);
-            if (chief is null)
+            Employee chief = await _service.FindById(chiefId);
+            Employee employee = await _service.FindById(employeeId);
+            if (chief is null || employee is null)
             {
                 return NotFound();
             }
-            var employee = await _service.FindById(employeeId);
-            if (employee is null)
-            {
-                return NotFound();
-            }
-            chief.AddSubordinate(employee);
+
+            await _service.AddSubordinate(chiefId, employeeId);
             return Ok(chief);
         }
     }
