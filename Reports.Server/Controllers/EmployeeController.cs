@@ -21,15 +21,13 @@ namespace Reports.Server.Controllers
             _service = service;
         }
 
-        [HttpPost]
-        [Route("create")]
+        [HttpPost("create")]
         public async Task<Employee> Create([FromBody] EmployeeDto dto)
         {
             return await _service.Create(dto.Name); 
         }
 
-        [HttpGet]
-        [Route("findName")]
+        [HttpGet("findName")]
         public async Task<IActionResult> FindByName([FromQuery] string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return StatusCode((int)HttpStatusCode.BadRequest);
@@ -42,8 +40,7 @@ namespace Reports.Server.Controllers
             return NotFound();
         }
 
-        [HttpGet]
-        [Route("findId")]
+        [HttpGet("findId")]
         public async Task<IActionResult> FindById([FromQuery] Guid id)
         {
             if (id == Guid.Empty) return StatusCode((int)HttpStatusCode.BadRequest);
@@ -56,8 +53,7 @@ namespace Reports.Server.Controllers
             return NotFound();
         }
         
-        [HttpGet]
-        [Route("getAll")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAll()
         {
             IEnumerable<Employee> result = await _service.GetAll();
@@ -68,9 +64,8 @@ namespace Reports.Server.Controllers
 
             return NotFound();
         }
-
-        [HttpPatch]
-        [Route("AddSubordinate")]
+        
+        [HttpPatch("AddSubordinate")]
         public async Task<IActionResult> SetNewChief(
             [FromQuery] Guid chiefId,
             [FromQuery] Guid employeeId

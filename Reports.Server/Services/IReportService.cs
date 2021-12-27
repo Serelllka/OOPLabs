@@ -7,8 +7,8 @@ namespace Reports.Server.Services
 {
     public interface IReportService
     {
-        public Task<Report> Create(Guid taskId, DateTime resolveDate);
-        public Task<Report> FindById(Guid id);
-        public Task<IEnumerable<Report>> GetAll();
+        Task<Report> Create(Guid taskId, DateTime resolveDate);
+        Task<Report> FindById(Guid id);
+        Task<IEnumerable<Report>> GetAll();
     }
 }

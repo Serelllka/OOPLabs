@@ -23,9 +23,8 @@ namespace Reports.Server.Controllers
         {
             _taskService = taskService;
         }
-
-        [HttpPost]
-        [Route("create")]
+        
+        [HttpPost("create")]
         public async Task<TaskModel> CreateTask([FromBody] TaskDto taskModel)
         {
             return await _taskService.Create(
@@ -33,9 +32,8 @@ namespace Reports.Server.Controllers
                 taskModel.Name,
                 taskModel.Description);
         }
-
-        [HttpGet]
-        [Route("getAll")]
+        
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAll()
         {
             IEnumerable<TaskModel> result = await _taskService.GetAll();
@@ -47,8 +45,7 @@ namespace Reports.Server.Controllers
             return NotFound();
         }
         
-        [HttpGet]
-        [Route("getAllClosed")]
+        [HttpGet("getAllClosed")]
         public async Task<IActionResult> GetAllClosed()
         {
             IEnumerable<TaskModel> result = await _taskService.GetAllClosed();
@@ -60,8 +57,7 @@ namespace Reports.Server.Controllers
             return NotFound();
         }
         
-        [HttpGet]
-        [Route("getAllOpened")]
+        [HttpGet("getAllOpened")]
         public async Task<IActionResult> GetAllOpened()
         {
             IEnumerable<TaskModel> result = await _taskService.GetAllOpened();
@@ -72,9 +68,8 @@ namespace Reports.Server.Controllers
 
             return NotFound();
         }
-
-        [HttpGet]
-        [Route("findId")]
+        
+        [HttpGet("findId")]
         public async Task<IActionResult> FindById([FromQuery]Guid id)
         {
             TaskModel result = await _taskService.FindById(id);
@@ -86,8 +81,7 @@ namespace Reports.Server.Controllers
             return NotFound();
         }
         
-        [HttpGet]
-        [Route("findAssignedEmployee")]
+        [HttpGet("findAssignedEmployee")]
         public async Task<IActionResult> FindByAssignedEmployee
             ([FromQuery]Guid employeeId)
         {
@@ -100,8 +94,7 @@ namespace Reports.Server.Controllers
             return NotFound();
         }
         
-        [HttpGet]
-        [Route("findEditors")]
+        [HttpGet("findEditors")]
         public async Task<IActionResult> FindByEditors
             ([FromQuery]Guid employeeId)
         {
@@ -114,8 +107,7 @@ namespace Reports.Server.Controllers
             return NotFound();
         }
         
-        [HttpGet]
-        [Route("taskOfSubs")]
+        [HttpGet("taskOfSubs")]
         public async Task<IActionResult> GetAllTaskOfSubs([FromQuery]Guid employeeId)
         {
             IEnumerable<TaskModel> result = await _taskService.FindByAssignedEmployee(employeeId);
@@ -127,8 +119,7 @@ namespace Reports.Server.Controllers
             return NotFound();
         }
         
-        [HttpPatch]
-        [Route("updateTask")]
+        [HttpPatch("updateTask")]
         public async Task<IActionResult> AddTaskChanges([FromBody] TaskChangesDto changes)
         {
             TaskModel task = await _taskService.FindById(changes.TaskId);
@@ -141,16 +132,14 @@ namespace Reports.Server.Controllers
             return Ok(task);
         }
         
-        [HttpPatch]
-        [Route("close")]
+        [HttpPatch("close")]
         public async Task<IActionResult> CloseTask([FromQuery] Guid taskId)
         {
             TaskModel task = await _taskService.CloseTask(taskId);
             return Ok(task);
         }
         
-        [HttpPut]
-        [Route("updateEmployee")]
+        [HttpPut("updateEmployee")]
         public async Task<IActionResult> SetNewEmployee([FromBody] UpdateEmployeeDto employeeDto)
         {
             TaskModel task = await _taskService.FindById(employeeDto.TaskId);

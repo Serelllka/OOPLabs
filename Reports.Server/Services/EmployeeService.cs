@@ -32,7 +32,7 @@ namespace Reports.Server.Services
 
         public async Task<IEnumerable<Employee>> FindByName(string name)
         {
-            var employees = await _context.Employees.ToListAsync();
+            List<Employee> employees = await _context.Employees.ToListAsync();
             return employees.Where(item => 
                 string.Equals(item.Name, name, StringComparison.OrdinalIgnoreCase));
         }

@@ -19,16 +19,13 @@ namespace Reports.Server.Controllers
             _reportService = reportService;
         }
         
-        
-        [HttpPost]
-        [Route("create")]
+        [HttpPost("create")]
         public async Task<Report> CreateReport([FromBody] ReportDto reportDto)
         {
             return await _reportService.Create(reportDto.TaskId, reportDto.ResolveDate);
         }
         
-        [HttpGet]
-        [Route("findId")]
+        [HttpGet("findId")]
         public async Task<IActionResult> FindById([FromQuery] Guid id)
         {
             Report item = await _reportService.FindById(id);
@@ -39,9 +36,8 @@ namespace Reports.Server.Controllers
 
             return Ok(item);
         }
-
-        [HttpGet]
-        [Route("getAll")]
+        
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAll()
         {
             IEnumerable<Report> result = await _reportService.GetAll();
